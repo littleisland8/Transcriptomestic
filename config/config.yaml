@@ -1,0 +1,36 @@
+aligndir: alignments
+outdir: results
+logdir: logs
+scriptdir: workflow/scripts
+
+samples:
+    sample1: 1178
+    sample2: 1463
+    sample3: 2020
+    sample4: 2159
+
+aligners:
+   aligner1: STAR
+
+strand:
+   R1: R1
+   R2: R2
+
+genome: /home/simone/mnt/part1/resources/genomes/GRCh38_full_analysis_set_plus_decoy_hla.fa
+
+gtf: resources/Homo_sapiens.GRCh38.111.gtf
+
+sjdbOverhang: 74 #Put max read length -1
+stranded: reverse
+htseqmode: intersection-nonempty
+
+
+#awk 'NR%4 == 2 {lengths[length($0)]++} END {for (l in lengths) {print l, lengths[l]}}' 1178.R1.sub.fastq
+
+#DESeq from HTSeq count parameters
+
+DESeqFromHTSeqCount:
+   count: 10
+   alpha: 0.05
+   height: 10
+   width: 10
