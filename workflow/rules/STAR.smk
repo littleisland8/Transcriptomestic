@@ -2,7 +2,8 @@ rule STARIndex:
     input:
         fasta=config["genome"],
     output:
-        directory("resources/Test")
+        log="resources/GRCh38_full_analysis_set_plus_decoy_hla/Log.out",
+        idx=directory("resources/GRCh38_full_analysis_set_plus_decoy_hla")
     message:
         "STAR index"
     threads: 5
@@ -14,19 +15,19 @@ rule STARIndex:
     log:
         "logs/star_index_GRCh38_full_analysis_set_plus_decoy_hla.fa.log"
     shell:
-        "STAR --runMode genomeGenerate --genomeDir {output} --genomeFastaFiles {input} --sjdbGTFfile {params.gtf} --sjdbOverhang {params.sjdbOverhang} 2>{log}"    
+        "STAR --runMode genomeGenerate --genomeDir {output.idx} --genomeFastaFiles {input} --sjdbGTFfile {params.gtf} --sjdbOverhang {params.sjdbOverhang} 2>{log}"    
 
 
 rule STARAlign:
     input:
-        log="resources/Test/Log.out",
-        idx="resources/Test/",
+        log="resources/GRCh38_full_analysis_set_plus_decoy_hla/Log.out",
+        idx=directory("resources/GRCh38_full_analysis_set_plus_decoy_hla"),
         R1="data/{sample}.R1.tr.fastq.gz",
         R2="data/{sample}.R2.tr.fastq.gz"
     output:
         "alignments/{sample}Aligned.out.sam"
     message:
-        "STAR index"
+        "STAR Align"
     threads: 5
     conda:
         "../envs/STAR.yaml"
