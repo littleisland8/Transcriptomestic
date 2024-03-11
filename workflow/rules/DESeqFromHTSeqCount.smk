@@ -1,8 +1,9 @@
 rule DESeqFromHTSeqCount:
 	input:
-		"resources/example_sampleTable.tsv"
+		table="resources/example_sampleTable.tsv",
+		counts=expand(f"count/{{sample}}.{{aligner}}.gene.count", sample=config["samples"].values(), aligner=config["aligners"].values())
 	output:
-		directory("results/STAR_HTseq")
+		"results/STAR_HTseq/results.ash.csv"
 	threads: 1
 	conda:
 		"../envs/DESeqFromHTSeq.yaml"
@@ -17,4 +18,4 @@ rule DESeqFromHTSeqCount:
 		height=config["DESeqFromHTSeqCount"]["height"],
 		width=config["DESeqFromHTSeqCount"]["width"]
 	shell:
-		"Rscript {params.script} -t {input} -c {params.counts} -a {params.alpha} -H {params.height} -w {params.width} -o {output} 2>{log}"
+		"Rscript {params.script} -t {input.table} -c {params.counts} -a {params.alpha} -H {params.height} -w {params.width} -o {output} 2>{log}"
