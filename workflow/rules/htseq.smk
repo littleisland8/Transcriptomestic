@@ -1,9 +1,9 @@
-rule HtseqcountGene:
+rule HtseqcountGeneFromSTAR:
 	input:
-		bam="alignments/{sample}.Aligned.out.srt.bam",
-		bai="alignments/{sample}.Aligned.out.srt.bam.bai"
+		bam="alignments/{sample}.STAR.srt.bam",
+		bai="alignments/{sample}.STAR.srt.bam.bai"
 	output:
-		"count/{sample}.gene.count"
+		"count/{sample}.STAR.gene.count"
 	threads: 1
 	conda:
 		"../envs/htseq.yaml"

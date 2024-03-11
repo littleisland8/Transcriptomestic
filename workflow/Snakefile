@@ -13,13 +13,13 @@ rule fastqc:
 
 rule STAR:
 	input:
-		directory("resources/GRCh38_full_analysis_set_plus_decoy_hla"),
-		expand(f"alignments/{{sample}}.Aligned.out.srt.bam.bai", sample=config["samples"].values())
+		"resources/GRCh38_full_analysis_set_plus_decoy_hla/Log.out",
+		expand(f"alignments/{{sample}}.{{aligner}}.srt.bam.bai", sample=config["samples"].values(), aligner=config["aligners"].values())
 
 rule Htseq:
 	input:
-		expand(f"count/{{sample}}.gene.count", sample=config["samples"].values())
+		expand(f"count/{{sample}}.{{aligner}}.gene.count", sample=config["samples"].values(), aligner=config["aligners"].values())
 
 rule STAR_HTSeq:
 	input:
-		directory(f"STAR_HTseq")
+		directory(f"results/STAR_HTseq")

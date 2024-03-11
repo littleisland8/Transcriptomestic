@@ -2,7 +2,7 @@ rule DESeqFromHTSeqCount:
 	input:
 		"resources/example_sampleTable.tsv"
 	output:
-		directory("STAR_HTseq")
+		directory("results/STAR_HTseq")
 	threads: 1
 	conda:
 		"../envs/DESeqFromHTSeq.yaml"
