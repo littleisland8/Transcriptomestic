@@ -15,6 +15,6 @@ rule fastpTumor: ## aggiungere flag per i threads
 		"Trimming with fastp"	
 	params:
 		#adapters="--adapter_sequence ACGGCTAGCTA --adapter_sequence_r2 AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
-		extra="--length_required 30 --detect_adapter_for_pe --qualified_quality_phred 20 --unqualified_percent_limit 20"
+		extra=" --average_qual 25 --low_complexity_filter --complexity_threshold 30 -x --detect_adapter_for_pe --overrepresentation_analysis"
 	wrapper:
 		"v3.3.3/bio/fastp"
