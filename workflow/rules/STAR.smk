@@ -24,7 +24,7 @@ rule STARAlign:
         R1="data/{sample}.R1.tr.fastq.gz",
         R2="data/{sample}.R2.tr.fastq.gz"
     output:
-        temp("alignments/{sample}.STAR.Aligned.out.sam")
+        "alignments/{sample}.STAR.srt.bam"
     message:
         "STAR Align"
     threads: 5
@@ -36,20 +36,7 @@ rule STARAlign:
     log:
         "logs/{sample}.STARAlign.log"
     shell:
-        "STAR --runThreadN {threads} --readFilesCommand {params.readFilesCommand} --outFileNamePrefix alignments/{wildcards.sample}.STAR. --genomeDir {input.idx} --readFilesIn {input.R1} {input.R2} 2>{log}"
-
-rule SamtoolsSort:
-    input:
-        "alignments/{sample}.STAR.Aligned.out.sam"
-    output:
-        "alignments/{sample}.STAR.srt.bam",
-    log:
-       "logs/{sample}.SamtoolsSort.log"
-    params:
-        extra="-m 4G",
-    threads: 8
-    wrapper:
-        "v3.3.6/bio/samtools/sort"
+        "STAR --runThreadN {threads} --readFilesCommand {params.readFilesCommand} --outFileNamePrefix alignments/{wildcards.sample}.STAR. --outSAMunmapped Within --outFilterMismatchNmax 10 --quantMode TranscriptomeSAM GeneCounts --chimSegmentMin 15 --outSAMtype BAM SortedByCoordinate --genomeDir {input.idx} --readFilesIn {input.R1} {input.R2} 2>{log}"
 
 rule SamtoolsIndex:
     input:
