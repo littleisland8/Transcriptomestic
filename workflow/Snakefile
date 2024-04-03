@@ -3,6 +3,7 @@ configfile: "config/config.yaml"
 include: "rules/fastqc.smk"
 include: "rules/fastp.smk"
 include: "rules/STAR.smk"
+include: "rules/BigWig.smk"
 include: "rules/htseq.smk"
 include: "rules/DESeqFromHTSeqCount.smk"
 
@@ -16,10 +17,14 @@ rule STAR:
 		"resources/GRCh38_full_analysis_set_plus_decoy_hla/Log.out",
 		expand(f"alignments/{{sample}}.{{aligner}}.srt.bam.bai", sample=config["samples"].values(), aligner=config["aligners"].values())
 
+rule BigWig:
+	input:
+		expand(f"alignments/{{sample}}.{{aligner}}.bw", sample=config["samples"].values(), aligner=config["aligners"].values())
+
 rule Htseq:
 	input:
 		expand(f"count/{{sample}}.{{aligner}}.gene.count", sample=config["samples"].values(), aligner=config["aligners"].values())
 
 rule STAR_HTSeq:
 	input:
-		directory(f"results/STAR_HTseq")
+		f"results/STAR_HTseq/results.ash.csv"
