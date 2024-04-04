@@ -15,7 +15,7 @@ rule fastqc:
 rule STAR:
 	input:
 		"resources/GRCh38_full_analysis_set_plus_decoy_hla/Log.out",
-		expand(f"alignments/{{sample}}.{{aligner}}.srt.bam.bai", sample=config["samples"].values(), aligner=config["aligners"].values())
+		expand(f"alignments/{{sample}}.{{aligner}}.STAR.Aligned.sortedByCoord.out.bam.bai", sample=config["samples"].values(), aligner=config["aligners"].values())
 
 rule BigWig:
 	input:
