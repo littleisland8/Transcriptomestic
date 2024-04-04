@@ -24,7 +24,7 @@ rule BigWig:
 
 rule Htseq:
 	input:
-		expand(f"count/{{sample}}.{{aligner}}.gene.count", sample=config["samples"].values(), aligner=config["aligners"].values())
+		expand(f"count/htseq/{{sample}}.{{aligner}}.gene.count", sample=config["samples"].values(), aligner=config["aligners"].values())
 
 rule featurecounts:
 		input:
