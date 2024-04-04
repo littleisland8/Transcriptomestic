@@ -1,6 +1,7 @@
 rule GenerateBigWig:
     input:
-        "alignments/{sample}.STAR.srt.bam",
+        bam="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam",
+        bai="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai"
     output:
         "alignments/{sample}.STAR.bw",
     log:
@@ -9,4 +10,4 @@ rule GenerateBigWig:
     conda:
         "../envs/deeptools.yaml"
     shell:
-        "bamCoverage -b {input} -o {output} --normalizeUsing RPKM --binSize 1 --numberOfProcessors {threads} -v 2>{log}"
+        "bamCoverage -b {input.bam} -o {output} --normalizeUsing RPKM --binSize 1 --numberOfProcessors {threads} -v 2>{log}"
