@@ -24,7 +24,7 @@ rule STARAlign:
         R1="data/{sample}.R1.tr.fastq.gz",
         R2="data/{sample}.R2.tr.fastq.gz"
     output:
-        "alignments/{sample}.STAR.srt.bam"
+        "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam"
     message:
         "STAR Align"
     threads: 5
@@ -40,9 +40,9 @@ rule STARAlign:
 
 rule SamtoolsIndex:
     input:
-        "alignments/{sample}.STAR.srt.bam",
+        "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam",
     output:
-        "alignments/{sample}.STAR.srt.bam.bai",
+        "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai",
     log:
         "logs/{sample}.SamtoolsIndex.log",
     params:

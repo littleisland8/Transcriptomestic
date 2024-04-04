@@ -1,7 +1,7 @@
 rule HtseqcountGeneFromSTAR:
 	input:
-		bam="alignments/{sample}.STAR.srt.bam",
-		bai="alignments/{sample}.STAR.srt.bam.bai"
+		bam="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam",
+		bai="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai"
 	output:
 		"count/{sample}.STAR.gene.count"
 	threads: 1
