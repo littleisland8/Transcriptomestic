@@ -3,7 +3,7 @@ rule HtseqcountGeneFromSTAR:
 		bam="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam",
 		bai="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai"
 	output:
-		"count/{sample}.STAR.gene.count"
+		"count/htseq/{sample}.STAR.gene.count"
 	threads: 1
 	conda:
 		"../envs/htseq.yaml"
