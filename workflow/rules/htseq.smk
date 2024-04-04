@@ -14,9 +14,10 @@ rule HtseqcountGeneFromSTAR:
 	params:
 		stranded=config["stranded"],
 		mode=config["htseqmode"],
-		gtf=config["gtf"]
+		gtf=config["gtf"],
+		extra=config["HTSeq_extra"]
 	shell:
-		"htseq-count -f bam --max-reads-in-buffer 80000000 -m {params.mode} -t gene --idattr gene_id -r pos -s {params.stranded} {input.bam} {params.gtf} > {output} 2>{log}"
+		"htseq-count -f bam --max-reads-in-buffer 80000000 -m {params.mode} -a {params.extra} -t gene --idattr gene_id -r pos -s {params.stranded} {input.bam} {params.gtf} > {output} 2>{log}"
 
 
 
