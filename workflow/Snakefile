@@ -5,6 +5,7 @@ include: "rules/fastp.smk"
 include: "rules/STAR.smk"
 include: "rules/BigWig.smk"
 include: "rules/htseq.smk"
+include: "rules/featureCounts.smk"
 include: "rules/DESeqFromHTSeqCount.smk"
 
 rule fastqc:
@@ -24,6 +25,10 @@ rule BigWig:
 rule Htseq:
 	input:
 		expand(f"count/{{sample}}.{{aligner}}.gene.count", sample=config["samples"].values(), aligner=config["aligners"].values())
+
+rule featurecounts:
+		input:
+			expand(f"count/featureCounts/{{sample}}.{{aligner}}.gene.count.featureCounts.tsv", sample=config["samples"].values(), aligner=config["aligners"].values())
 
 rule STAR_HTSeq:
 	input:
