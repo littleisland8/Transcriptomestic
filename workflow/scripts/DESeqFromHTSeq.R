@@ -33,7 +33,7 @@ opt = parse_args(OptionParser(option_list=option_list))
 
 ## set working directory
 
-#setwd("count/")
+#setwd("count/htseq")
 
 if (dir.exists(opt$output)){
 
@@ -52,7 +52,7 @@ if (dir.exists(opt$output)){
 }
 
 
-indir <- file.path(getwd(),"count")
+indir <- file.path(getwd(),"count/htseq")
 
 #preprocessing
 sampleTable <- read.table(opt$sampletable, sep="\t", header=TRUE)
