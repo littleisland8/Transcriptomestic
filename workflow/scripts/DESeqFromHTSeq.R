@@ -73,14 +73,15 @@ dds <- ddsHTSeq[keep,]
 dds$condition <- relevel(dds$condition, ref = "CONTROL")
 
 # Visualize Boxplot of normalized counts
+statusCol <- as.numeric(factor(sampleTable$condition)) + 1
 pdf(file.path(opt$output,"boxplot.counts.pdf"), height=as.numeric(opt$Height), width=as.numeric(opt$width))
 rs = rowSums(counts(dds))
 par(mfrow=c(1,2)) # plots two plots 
-boxplot(log2(counts(dds)[rs > 0,] + 1), cex.lab = 2, cex.axis = 2,xaxt = "n")# not normalized
+boxplot(log2(counts(dds)[rs > 0,] + 1), cex.lab = 2, cex.axis = 2,xaxt = "n", col=statusCol)# not normalized
 tick <- seq_along(as.character(dds$group))
 axis(1, at = tick, labels = F)
 text(tick, par("usr")[3] - 2.5, as.character(dds$group), srt = 90, xpd = T, offset =5)
-boxplot(log2(counts(dds, normalized=TRUE)[rs > 0,] + 1), cex.lab = 2, cex.axis = 2,xaxt = "n")# not normalized
+boxplot(log2(counts(dds, normalized=TRUE)[rs > 0,] + 1), cex.lab = 2, cex.axis = 2,xaxt = "n", col=statusCol)# not normalized
 tick <- seq_along(as.character(dds$group))
 axis(1, at = tick, labels = F)
 text(tick, par("usr")[3] - 2.5, as.character(dds$group), srt = 90, xpd = T, offset =5)
@@ -223,7 +224,6 @@ hist(res$pvalue, breaks=20, col="grey")
 dev.off()
 
 # outlayer plot
-statusCol <- as.numeric(factor(sampleTable$condition)) + 1
 pdf(file.path(opt$output,"Outlayer.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 par(mar=c(8,5,3,2))
 boxplot(log10(assays(dds)[["cooks"]]), range=0, las=2, main = "Outlayer", col=statusCol)
@@ -248,6 +248,10 @@ ResAnnotation <- function (restable){
 												 column="ALIAS",
 												 keytype="ENSEMBL",
 												 multiVals="first")
+	
+	# add column of EnsemblID to results
+	restable$EnsemblID <- ens.str
+	
 	#Annotation with biomatr
 	#ensembl <- useEnsembl(biomart = "genes",dataset = "hsapiens_gene_ensembl")
 	#restable$ensembl <- sapply( strsplit( rownames(restable), split="\\+" ), "[", 1 )
@@ -289,7 +293,7 @@ resIHW <- results(dds, filterFun=ihw, alpha = 0.05)
 metadata(resIHW)$ihwResult
 
 ## Export MA plot
-pdf(file.path(opt$output,"multipleMAplot.pdf"),height = as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"multipleMAplot.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 par(mfrow=c(2,2), mar=c(4,4,2,1))
 xlim <- c(1,1e5); ylim <- c(-10,10)
 plotMA(resLFC, xlim=xlim, ylim=ylim, main="apeglm")
@@ -383,7 +387,7 @@ write.csv(df_100, file.path(opt$output,"top100deg.vst.csv"), row.names = TRUE, q
 #write.xlsx(df_100, file.path(opt$output,"top100deg.vst.xlsx"), row.names = TRUE)
 
 #export
-pdf(file.path(opt$output,"heatmap_top100.vst.pdf"),,height = as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"heatmap_top100.vst.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 pheatmap(mat100, annotation = annotation, annotation_colors = annotation_colors, color = pal, scale = "row")
 dev.off()
 
@@ -397,7 +401,7 @@ write.csv(df_1000, file.path(opt$output,"top1000deg.vst.csv"), row.names = TRUE,
 #write.xlsx(df_1000, file.path(opt$output,"top1000deg.vst.xlsx"), row.names = TRUE)
 
 #export
-pdf(file.path(opt$output,"heatmap_top1000.vst.pdf"), ,height = as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"heatmap_top1000.vst.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 pheatmap(mat1000, annotation = annotation, annotation_colors = annotation_colors, fontsize_row = 8, color = pal,show_rownames = FALSE, scale = "row")
 dev.off()
 
@@ -479,7 +483,7 @@ write.csv(res_filter, file.path(opt$output,"results.filtered.csv"), row.names = 
 
 #Heatmap DEG res_
 res_filter <- merge(as.data.frame(res_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
-norm_counts_DEG <- res_filter[c(1,13:ncol(res_filter))]
+norm_counts_DEG <- res_filter[c(1,14:ncol(res_filter))]
 rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
 norm_counts_DEG$Row.names <- NULL
 
@@ -511,7 +515,6 @@ heatmap.2(norm_counts_DEG_mat,
           main = paste0("DEG results heatmap n=", nrow_heat),
           trace = "none")
 dev.off()
-dev.off()
 
 #Export the results apeglm
 resApeglm_ <- as.data.frame(resApeglm[order(resApeglm$padj, decreasing = FALSE),])
@@ -534,7 +537,7 @@ write.csv(resApeglm_filter, file.path(opt$output,"results.filtered.apeglm.csv"),
 
 #Heatmap DEG apeglm
 resApeglm_filter <- merge(as.data.frame(resApeglm_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
-norm_counts_DEG <- resApeglm_filter[c(1,14:ncol(resApeglm_filter))]
+norm_counts_DEG <- resApeglm_filter[c(1,13:ncol(resApeglm_filter))]
 rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
 norm_counts_DEG$Row.names <- NULL
 
@@ -542,16 +545,16 @@ norm_counts_DEG_mat <- as.matrix(norm_counts_DEG)
 scaledata <- t(scale(t(norm_counts_DEG_mat)))
 hc <- hclust(as.dist(1-cor(scaledata, method="spearman")), method="complete")
 sampleTree = as.dendrogram(hc, method="average")
-plot(sampleTree,
-     main = "Sample Clustering",
-     ylab = "Height")
+#plot(sampleTree,
+#     main = "Sample Clustering",
+#     ylab = "Height")
 
 hr <- hclust(as.dist(1-cor(t(scaledata), method="pearson")), method="complete") # Cluster rows by Pearson correlation.
 geneTree = as.dendrogram(hr, method="average")
-plot(geneTree,
-     leaflab = "none",             
-     main = "Gene Clustering",
-     ylab = "Height")
+#plot(geneTree,
+#     leaflab = "none",             
+#     main = "Gene Clustering",
+#     ylab = "Height")
 
 pdf(file.path(opt$output,"heatmap_resApeglmDEG.pdf"),height = as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
@@ -565,7 +568,6 @@ heatmap.2(norm_counts_DEG_mat,
           labRow = F,
           main = paste0("DEG Apeglm heatmap n=", nrow_heat),
           trace = "none")
-dev.off()
 dev.off()
 
 #Export the results Norm
@@ -597,16 +599,16 @@ norm_counts_DEG_mat <- as.matrix(norm_counts_DEG)
 scaledata <- t(scale(t(norm_counts_DEG_mat)))
 hc <- hclust(as.dist(1-cor(scaledata, method="spearman")), method="complete")
 sampleTree = as.dendrogram(hc, method="average")
-plot(sampleTree,
-     main = "Sample Clustering",
-     ylab = "Height")
+#plot(sampleTree,
+#     main = "Sample Clustering",
+#     ylab = "Height")
 
 hr <- hclust(as.dist(1-cor(t(scaledata), method="pearson")), method="complete") # Cluster rows by Pearson correlation.
 geneTree = as.dendrogram(hr, method="average")
-plot(geneTree,
-     leaflab = "none",             
-     main = "Gene Clustering",
-     ylab = "Height")
+#plot(geneTree,
+#     leaflab = "none",             
+#     main = "Gene Clustering",
+#     ylab = "Height")
 
 pdf(file.path(opt$output,"heatmap_resNormDEG.pdf"),height = as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
@@ -620,7 +622,6 @@ heatmap.2(norm_counts_DEG_mat,
           labRow = F,
           main = paste0("DEG norm heatmap n=", nrow_heat),
           trace = "none")
-dev.off()
 dev.off()
 
 #Export the results Ash
@@ -644,7 +645,7 @@ write.csv(resAsh_filter, file.path(opt$output,"results.filtered.ash.csv"), row.n
 
 #Heatmap DEG Ash
 resAsh_filter <- merge(as.data.frame(resAsh_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
-norm_counts_DEG <- resAsh_filter[c(1,14:ncol(resAsh_filter))]
+norm_counts_DEG <- resAsh_filter[c(1,13:ncol(resAsh_filter))]
 rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
 norm_counts_DEG$Row.names <- NULL
 
@@ -652,16 +653,16 @@ norm_counts_DEG_mat <- as.matrix(norm_counts_DEG)
 scaledata <- t(scale(t(norm_counts_DEG_mat)))
 hc <- hclust(as.dist(1-cor(scaledata, method="spearman")), method="complete")
 sampleTree = as.dendrogram(hc, method="average")
-plot(sampleTree,
-     main = "Sample Clustering",
-     ylab = "Height")
+#plot(sampleTree,
+#     main = "Sample Clustering",
+#     ylab = "Height")
 
 hr <- hclust(as.dist(1-cor(t(scaledata), method="pearson")), method="complete") # Cluster rows by Pearson correlation.
 geneTree = as.dendrogram(hr, method="average")
-plot(geneTree,
-     leaflab = "none",             
-     main = "Gene Clustering",
-     ylab = "Height")
+#plot(geneTree,
+#     leaflab = "none",             
+#     main = "Gene Clustering",
+#     ylab = "Height")
 
 pdf(file.path(opt$output,"heatmap_resAshDEG.pdf"),height = as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
@@ -676,26 +677,4 @@ heatmap.2(norm_counts_DEG_mat,
           main = paste0("DEG Ash heatmap n=", nrow_heat),
           trace = "none")
 dev.off()
-dev.off()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
