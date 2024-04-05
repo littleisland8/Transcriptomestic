@@ -42,5 +42,5 @@ rule STAR_featureCounts:
 	input:
 		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
-		expand(f"count/htseq/{{sample}}.{{aligner}}.gene.count", sample=config["samples"].values(), aligner=config["aligners"].values()),
+		expand(f"count/featureCounts/{{sample}}.{{aligner}}.gene.count", sample=config["samples"].values(), aligner=config["aligners"].values()),
 		directory("results/STAR_featureCounts")
