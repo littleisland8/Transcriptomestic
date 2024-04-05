@@ -27,4 +27,4 @@ dependencies:
  - r-R.utils
  - r-gplots
  - r-data.table
- - r-PCAtools
+ - bioconductor-PCAtools

@@ -3,14 +3,14 @@ rule HtseqcountGeneFromSTAR:
 		bam="alignments/{sample}.{aligner}.Aligned.sortedByCoord.out.bam",
 		bai="alignments/{sample}.{aligner}.Aligned.sortedByCoord.out.bam.bai"
 	output:
-		"count/htseq/{sample}.STAR.gene.count"
+		"count/htseq/{sample}.{aligner}.gene.count"
 	threads: 1
 	conda:
 		"../envs/htseq.yaml"
 	message:
 		"htseq count {wildcards.sample}"
 	log:
-		"logs/{sample}.HtseqcountGene.log"
+		"logs/{sample}.{aligner}.HtseqcountGene.log"
 	params:
 		stranded=config["stranded"],
 		mode=config["htseqmode"],
