@@ -3,7 +3,7 @@ rule DESeqFromHTSeqCount:
 		table="resources/example_sampleTable.tsv",
 		counts=expand(f"count/{{sample}}.{{aligner}}.gene.count", sample=config["samples"].values(), aligner=config["aligners"].values())
 	output:
-		"results/STAR_HTseq/results.ash.csv"
+		directory("results/STAR_HTseq")
 	threads: 1
 	conda:
 		"../envs/DESeqFromHTSeq.yaml"
