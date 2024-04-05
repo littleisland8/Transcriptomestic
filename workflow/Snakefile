@@ -7,6 +7,7 @@ include: "rules/BigWig.smk"
 include: "rules/htseq.smk"
 include: "rules/featureCounts.smk"
 include: "rules/DESeqFromHTSeqCount.smk"
+include: "rules/DESeqFromFeatureCounts.smk"
 
 rule fastqc:
 	input:
