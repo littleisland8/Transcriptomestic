@@ -241,11 +241,13 @@ ResAnnotation <- function (restable){
 	restable$entrez <- mapIds(org.Hs.eg.db,
 													keys=rownames(restable),
 													column="ENTREZID",
-													keytype="ENSEMBL")
+													keytype="ENSEMBL",
+													multiVals = "first")
 	restable$alias <- mapIds(org.Hs.eg.db,
 												 keys=rownames(restable),
 												 column="ALIAS",
-												 keytype="ENSEMBL")
+												 keytype="ENSEMBL",
+												 multiVals="first")
 	#Annotation with biomatr
 	#ensembl <- useEnsembl(biomart = "genes",dataset = "hsapiens_gene_ensembl")
 	#restable$ensembl <- sapply( strsplit( rownames(restable), split="\\+" ), "[", 1 )
@@ -477,7 +479,7 @@ write.csv(res_filter, file.path(opt$output,"results.filtered.csv"), row.names = 
 
 #Heatmap DEG res_
 res_filter <- merge(as.data.frame(res_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
-norm_counts_DEG <- res_filter[c(1,14:ncol(res_filter))]
+norm_counts_DEG <- res_filter[c(1,13:ncol(res_filter))]
 rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
 norm_counts_DEG$Row.names <- NULL
 
@@ -485,16 +487,16 @@ norm_counts_DEG_mat <- as.matrix(norm_counts_DEG)
 scaledata <- t(scale(t(norm_counts_DEG_mat)))
 hc <- hclust(as.dist(1-cor(scaledata, method="spearman")), method="complete")
 sampleTree = as.dendrogram(hc, method="average")
-plot(sampleTree,
-     main = "Sample Clustering",
-     ylab = "Height")
+#plot(sampleTree,
+#     main = "Sample Clustering",
+#     ylab = "Height")
 
 hr <- hclust(as.dist(1-cor(t(scaledata), method="pearson")), method="complete") # Cluster rows by Pearson correlation.
 geneTree = as.dendrogram(hr, method="average")
-plot(geneTree,
-     leaflab = "none",             
-     main = "Gene Clustering",
-     ylab = "Height")
+#plot(geneTree,
+#     leaflab = "none",             
+#     main = "Gene Clustering",
+#     ylab = "Height")
 
 pdf(file.path(opt$output,"heatmap_resDEG.pdf"),height = as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)

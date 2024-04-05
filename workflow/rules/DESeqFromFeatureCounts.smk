@@ -1,7 +1,7 @@
 rule DESeqFromFeatureCounts:
 	input:
 		table="resources/example_sampleTable.tsv",
-		counts=expand(f"count/{{sample}}.{{aligner}}.gene.count", sample=config["samples"].values(), aligner=config["aligners"].values())
+		counts=expand(f"count/featureCounts/{{sample}}.{{aligner}}.STAR.gene.count.featureCounts.tsv", sample=config["samples"].values(), aligner=config["aligners"].values())
 	output:
 		directory("results/STAR_featureCounts/")
 	threads: 1
