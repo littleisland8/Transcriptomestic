@@ -25,3 +25,4 @@ dependencies:
  - r-ggrepel
  - r-optparse
  - r-R.utils
+ - r-gplots
