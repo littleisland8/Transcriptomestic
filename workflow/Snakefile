@@ -32,4 +32,4 @@ rule featurecounts:
 
 rule STAR_HTSeq:
 	input:
-		f"results/STAR_HTseq/results.ash.csv"
+		directory("results/STAR_HTseq")
