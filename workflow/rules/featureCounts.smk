@@ -13,7 +13,7 @@ rule featureCounts:
 		"logs/{sample}.featureCountsGene.log"
 	params:
 		stranded=config["strandedfeatureCounts"],
-		fasta=config["fasta"],
+		fasta=config["genome"],
 		gtf=config["gtf"],
 		extra=config["featureCounts_extra"]
 	shell:
