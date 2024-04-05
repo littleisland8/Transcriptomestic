@@ -1,0 +1,30 @@
+channels:
+ - conda-forge
+ - r
+ - bioconda
+dependencies:
+ - r-base
+ - bioconductor-deseq2
+ - r-ggplot2
+ - r-dplyr
+ - bioconductor-vsn
+ - r-rcolorbrewer
+ - r-pheatmap
+ - bioconductor-annotationdbi
+ - bioconductor-annotationforge
+ - bioconductor-biocfilecache
+ - bioconductor-org.Hs.eg.db
+ - bioconductor-biomaRt
+ - bioconductor-enhancedvolcano
+ - bioconductor-apeglm
+ - bioconductor-ihw
+ - r-hexbin
+ - r-xlsx
+ - r-ashr
+ - bioconductor-apeglm
+ - r-ggrepel
+ - r-optparse
+ - r-R.utils
+ - r-gplots
+ - r-data.table
+ - r-PCAtools
