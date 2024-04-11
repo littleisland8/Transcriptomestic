@@ -608,7 +608,6 @@ ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
 topVarGenes_res <- res_filter$EnsemblID[1:100]
 rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
-head(mat)
 mat  <- mat - rowMeans(mat)
 annocol <- as.data.frame(colData(vst)[,1,drop=FALSE])
 pdf(file.path(opt$output,"Top100.vst.res.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
@@ -626,7 +625,6 @@ dev.off()
 #topVarGenes_res <- res_filter$EnsemblID[1:100]
 rownames(rlog) <- gsub("\\..*","",rownames(rlog))
 mat  <- assay(rlog)[ topVarGenes_res, ]
-head(mat)
 mat  <- mat - rowMeans(mat)
 annocol <- as.data.frame(colData(rlog)[,1,drop=FALSE])
 pdf(file.path(opt$output,"Top100.rlog.res.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
