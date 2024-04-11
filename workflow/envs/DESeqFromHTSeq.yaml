@@ -26,4 +26,5 @@ dependencies:
  - r-optparse
  - r-R.utils
  - r-gplots
+ - r-data.table
  - bioconductor-PCAtools
