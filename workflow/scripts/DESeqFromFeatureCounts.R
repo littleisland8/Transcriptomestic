@@ -121,10 +121,10 @@ dev.off()
 # Transform the raw count data
 
 vst <- vst(dds, blind = TRUE)
-rld <- rlog(dds, blind = TRUE)
+rlog <- rlog(dds, blind = TRUE)
 
-write.table(assay(rld), file.path(opt$output,"normalizedCountRlog.txt"), quote = FALSE, sep = "\t", row.names = TRUE)
-write.csv(assay(rld), file.path(opt$output,"normalizedCountRlog.csv"), quote = FALSE, row.names = TRUE)
+write.table(assay(rlog), file.path(opt$output,"normalizedCountRlog.txt"), quote = FALSE, sep = "\t", row.names = TRUE)
+write.csv(assay(rlog), file.path(opt$output,"normalizedCountRlog.csv"), quote = FALSE, row.names = TRUE)
 write.table(assay(vst), file.path(opt$output,"normalizedCountVst.txt"), quote = FALSE, sep = "\t")
 write.csv(assay(vst), file.path(opt$output,"normalizedCountVst.csv"), quote = FALSE, row.names = TRUE)
 
@@ -133,7 +133,7 @@ df <- bind_rows(
 	as_data_frame(log2(counts(dds, normalized=TRUE)[, c(1,2)]+1)) %>%
 		mutate(transformation = "log2(x + 1)"),
 	as_data_frame(assay(vst)[, c(1,2)]) %>% mutate(transformation = "vst"),
-	as_data_frame(assay(rld)[, c(1,2)]) %>% mutate(transformation = "rlog"))
+	as_data_frame(assay(rlog)[, c(1,2)]) %>% mutate(transformation = "rlog"))
 
 colnames(df)[1:2] <- c("x", "y")  
 
@@ -150,11 +150,11 @@ meanSdPlot(assay(vst))
 dev.off()
 
 pdf(file.path(opt$output, "transformationvsvariance.rlog.pdf"), height=as.numeric(opt$Height), width=as.numeric(opt$width))
-meanSdPlot(assay(rld))
+meanSdPlot(assay(rlog))
 dev.off()
 
 ## sample distance rlog
-sampleDists <- dist(t(assay(rld)))
+sampleDists <- dist(t(assay(rlog)))
 
 ## Plot Heatmap with sample-to-sample distance
 sampleDistMatrix <- as.matrix( sampleDists )
@@ -174,7 +174,7 @@ pdf(file.path(opt$output,"heatmap_dist_sample.rlog.pdf"), height=as.numeric(opt$
 pheatmap(sampleDists,clustering_distance_rows = sampleDists,clustering_distance_cols = sampleDists,col = colors,annotation = annotation,annotation_colors = annotation_colors)
 dev.off()
 
-## Plot clustering dendogram rld
+## Plot clustering dendogram rlog
 pdf(file.path(opt$output,"cluster_dendo.rlog.pdf"), height=as.numeric(opt$Height), width=as.numeric(opt$width))
 plot(hclust(sampleDists, method = "ward.D2"))
 dev.off()
@@ -198,9 +198,9 @@ dev.off()
 ## Plot PCA in order to see sample-to-sample distance
 
 ## PCA
-rld_pca <- plotPCA(rld, intgroup = c("condition"), returnData = TRUE)
-percentVar <- round(100 * attr(rld_pca, "percentVar"))
-pca_rld <- ggplot(rld_pca, aes(x = PC1, y = PC2, color = condition)) +
+rlog_pca <- plotPCA(rlog, intgroup = c("condition"), returnData = TRUE)
+percentVar <- round(100 * attr(rlog_pca, "percentVar"))
+pca_rlog <- ggplot(rlog_pca, aes(x = PC1, y = PC2, color = condition)) +
 	geom_point(size =2) +
 	xlab(paste0("PC1: ", percentVar[1], "% variance")) +
 	ylab(paste0("PC2: ", percentVar[2], "% variance")) +
@@ -212,21 +212,21 @@ pca_rld <- ggplot(rld_pca, aes(x = PC1, y = PC2, color = condition)) +
 									 segment.color = 'grey50',
 									 max.overlaps = 60) 
 
-ggsave(pca_rld, filename = file.path(opt$output,"2DPCA.rlog.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
+ggsave(pca_rlog, filename = file.path(opt$output,"2DPCA.rlog.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
 
 ## PCA PCAplot
 ## Generate p
-rld.output <- assay(rld)
-p <- pca(rld.output, metadata = coldata, removeVar = 0.1)
+rlog.output <- assay(rlog)
+p <- pca(rlog.output, metadata = coldata, removeVar = 0.1)
 #Determine optimum number of PCs to retain
 #Let's perform Horn's parallel analysis 
-horn <- parallelPCA(rld.output)
+horn <- parallelPCA(rlog.output)
 #Let's perform elbow's parallel analysis
 elbow <- findElbowPoint(p$variance)
 
 #Taking these values, we can produce a new scree plot and mark these
 # change number of PC for each experiment
-pdf(file.path(opt$output,"screeplot.rld.pdf"), height=as.numeric(opt$Height), width=as.numeric(opt$width))
+pdf(file.path(opt$output,"screeplot.rlog.pdf"), height=as.numeric(opt$Height), width=as.numeric(opt$width))
 screeplot(p,
           components = getComponents(p, 1:11),
           vline = c(horn$n, elbow)) +
@@ -237,7 +237,7 @@ screeplot(p,
 dev.off()
 
 # plotting
-pdf(file.path(opt$output,"PCA.biplot.rld.pdf"), height=as.numeric(opt$Height), width=as.numeric(opt$width))
+pdf(file.path(opt$output,"PCA.biplot.rlog.pdf"), height=as.numeric(opt$Height), width=as.numeric(opt$width))
 biplot(p, title = "Principal Component Analysis (PCA)")
 dev.off()
 
@@ -490,9 +490,9 @@ pdf(file.path(opt$output,"heatmap_top1000.vst.pdf"), ,height = as.numeric(opt$He
 pheatmap(mat1000, annotation = annotation, annotation_colors = annotation_colors, fontsize_row = 8, color = pal,show_rownames = FALSE, scale = "row")
 dev.off()
 
-## Gene clustering top 20 genes rld
-topVarGenes20 <- head(order(rowVars(assay(rld)), decreasing = TRUE), 20)
-mat20  <- assay(rld)[ topVarGenes20, ]
+## Gene clustering top 20 genes rlog
+topVarGenes20 <- head(order(rowVars(assay(rlog)), decreasing = TRUE), 20)
+mat20  <- assay(rlog)[ topVarGenes20, ]
 
 #export
 pdf(file.path(opt$output,"heatmap.top20.rlog.pdf"),height = as.numeric(opt$Height), width = as.numeric(opt$width))
@@ -504,9 +504,9 @@ write.table(df_20, file.path(opt$output,"top20deg.rlog.txt"), sep = "\t", row.na
 write.csv(df_20, file.path(opt$output,"top20deg.rlog.csv"), row.names = TRUE, quote = FALSE)
 write.xlsx(df_20, file.path(opt$output,"top20deg.rlog.xlsx"), row.names = TRUE)
 
-## Gene clustering top 50 genes rld
-topVarGenes50 <- head(order(rowVars(assay(rld)), decreasing = TRUE), 50)
-mat50  <- assay(rld)[ topVarGenes50, ]
+## Gene clustering top 50 genes rlog
+topVarGenes50 <- head(order(rowVars(assay(rlog)), decreasing = TRUE), 50)
+mat50  <- assay(rlog)[ topVarGenes50, ]
 
 df_50 <- as.data.frame(res[which(rownames(res) %in% rownames(mat50)),])
 write.table(df_50, file.path(opt$output,"top50deg.rlog.txt"), sep = "\t", row.names = TRUE, quote = FALSE)
@@ -518,9 +518,9 @@ pdf(file.path(opt$output,"heatmap_top50.rlog.pdf"),height = as.numeric(opt$Heigh
 pheatmap(mat50, annotation = annotation, annotation_colors = annotation_colors, color = pal, scale = "row")
 dev.off()
 
-## Gene clustering top 100 genes rld
-topVarGenes100 <- head(order(rowVars(assay(rld)), decreasing = TRUE), 100)
-mat100  <- assay(rld)[ topVarGenes100, ]
+## Gene clustering top 100 genes rlog
+topVarGenes100 <- head(order(rowVars(assay(rlog)), decreasing = TRUE), 100)
+mat100  <- assay(rlog)[ topVarGenes100, ]
 
 df_100 <- as.data.frame(res[which(rownames(res) %in% rownames(mat100)),])
 write.table(df_100, file.path(opt$output,"top100deg.rlog.txt"), sep = "\t", row.names = TRUE, quote = FALSE)
@@ -532,11 +532,11 @@ pdf(file.path(opt$output,"heatmap_top100.rlog.pdf"),height = as.numeric(opt$Heig
 pheatmap(mat100, annotation = annotation, annotation_colors = annotation_colors, color = pal, scale = "row")
 dev.off()
 
-## Gene clustering top 1000 genes rld
-topVarGenes1000 <- head(order(rowVars(assay(rld)), decreasing = TRUE), 1000)
-mat1000  <- assay(rld)[ topVarGenes1000, ]
+## Gene clustering top 1000 genes rlog
+topVarGenes1000 <- head(order(rowVars(assay(rlog)), decreasing = TRUE), 1000)
+mat1000  <- assay(rlog)[ topVarGenes1000, ]
 
-df_1000 <- as.data.frame(res[which(rownames(rld) %in% rownames(mat1000)),])
+df_1000 <- as.data.frame(res[which(rownames(rlog) %in% rownames(mat1000)),])
 write.table(df_1000, file.path(opt$output,"top1000deg.rlog.txt"), sep = "\t", row.names = TRUE, quote = FALSE)
 write.csv(df_1000, file.path(opt$output,"top1000deg.rlog.csv"), row.names = TRUE, quote = FALSE)
 write.xlsx(df_1000, file.path(opt$output,"top1000deg.rlog.xlsx"), row.names = TRUE)
@@ -601,16 +601,35 @@ heatmap.2(norm_counts_DEG_mat,
           trace = "none")
 dev.off()
 
-# graph for first 100 top regulated genes for res_
+# graph for first 100 top regulated genes for res_ vst
 mypalette <- brewer.pal(11, "RdYlBu")
 morecols <- colorRampPalette(mypalette)
 ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
 topVarGenes_res <- res_filter$EnsemblID[1:100]
 rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
+head(mat)
 mat  <- mat - rowMeans(mat)
 annocol <- as.data.frame(colData(vst)[,1,drop=FALSE])
 pdf(file.path(opt$output,"Top100.vst.res.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
+pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
+                   cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
+                   treeheight_row = 150, annotation_colors = ann_colors,
+                   main = "Top 100 most significant regulated genes", border_color = "black" )
+dev.off()
+
+
+# graph for first 100 top regulated genes for res_ rlog
+#mypalette <- brewer.pal(11, "RdYlBu")
+#morecols <- colorRampPalette(mypalette)
+#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
+#topVarGenes_res <- res_filter$EnsemblID[1:100]
+rownames(rlog) <- gsub("\\..*","",rownames(rlog))
+mat  <- assay(rlog)[ topVarGenes_res, ]
+head(mat)
+mat  <- mat - rowMeans(mat)
+annocol <- as.data.frame(colData(rlog)[,1,drop=FALSE])
+pdf(file.path(opt$output,"Top100.rlog.res.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
 pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
                    cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
                    treeheight_row = 150, annotation_colors = ann_colors,
@@ -652,10 +671,10 @@ sampleTree = as.dendrogram(hc, method="average")
 
 hr <- hclust(as.dist(1-cor(t(scaledata), method="pearson")), method="complete") # Cluster rows by Pearson correlation.
 geneTree = as.dendrogram(hr, method="average")
-plot(geneTree,
-     leaflab = "none",             
-     main = "Gene Clustering",
-     ylab = "Height")
+#plot(geneTree,
+#     leaflab = "none",             
+#     main = "Gene Clustering",
+#     ylab = "Height")
 
 pdf(file.path(opt$output,"heatmap_resApeglm_DEG.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
@@ -671,7 +690,7 @@ heatmap.2(norm_counts_DEG_mat,
           trace = "none")
 dev.off()
 
-# graph for first 100 top regulated genes for res_apeglm
+# graph for first 100 top regulated genes for res_apeglm vst
 mypalette <- brewer.pal(11, "RdYlBu")
 morecols <- colorRampPalette(mypalette)
 ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
@@ -681,6 +700,22 @@ mat  <- assay(vst)[ topVarGenes_res, ]
 mat  <- mat - rowMeans(mat)
 annocol <- as.data.frame(colData(vst)[,1,drop=FALSE])
 pdf(file.path(opt$output,"Top100.vst.res.apeglm.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
+pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
+                   cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
+                   treeheight_row = 150, annotation_colors = ann_colors, 
+                   main = "Top 100 most significant regulated genes", border_color = "black" )
+dev.off()
+
+# graph for first 100 top regulated genes for res_apeglm rlog
+#mypalette <- brewer.pal(11, "RdYlBu")
+#morecols <- colorRampPalette(mypalette)
+#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
+#topVarGenes_res <- resApeglm_filter$EnsemblID[1:100]
+rownames(rlog) <- gsub("\\..*","",rownames(rlog))
+mat  <- assay(rlog)[ topVarGenes_res, ]
+mat  <- mat - rowMeans(mat)
+annocol <- as.data.frame(colData(rlog)[,1,drop=FALSE])
+pdf(file.path(opt$output,"Top100.rlog.res.apeglm.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
 pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
                    cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
                    treeheight_row = 150, annotation_colors = ann_colors, 
@@ -741,7 +776,7 @@ heatmap.2(norm_counts_DEG_mat,
           trace = "none")
 dev.off()
 
-# graph for first 100 top regulated genes for res_norm
+# graph for first 100 top regulated genes for res_norm vst
 mypalette <- brewer.pal(11, "RdYlBu")
 morecols <- colorRampPalette(mypalette)
 ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
@@ -751,6 +786,22 @@ mat  <- assay(vst)[ topVarGenes_res, ]
 mat  <- mat - rowMeans(mat)
 annocol <- as.data.frame(colData(vst)[,1,drop=FALSE])
 pdf(file.path(opt$output,"Top100.vst.res.norm.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
+pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
+                   cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
+                   treeheight_row = 150, annotation_colors = ann_colors, 
+                   main = "Top 100 most significant regulated genes", border_color = "black" )
+dev.off()
+
+# graph for first 100 top regulated genes for res_norm rlog
+#mypalette <- brewer.pal(11, "RdYlBu")
+#morecols <- colorRampPalette(mypalette)
+#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
+#topVarGenes_res <- resNorm_filter$EnsemblID[1:100]
+rownames(rlog) <- gsub("\\..*","",rownames(rlog))
+mat  <- assay(rlog)[ topVarGenes_res, ]
+mat  <- mat - rowMeans(mat)
+annocol <- as.data.frame(colData(rlog)[,1,drop=FALSE])
+pdf(file.path(opt$output,"Top100.rlog.res.norm.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
 pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
                    cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
                    treeheight_row = 150, annotation_colors = ann_colors, 
@@ -811,7 +862,7 @@ heatmap.2(norm_counts_DEG_mat,
           trace = "none")
 dev.off()
 
-# graph for first 100 top regulated genes for res_ash
+# graph for first 100 top regulated genes for res_ash vst
 mypalette <- brewer.pal(11, "RdYlBu")
 morecols <- colorRampPalette(mypalette)
 ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
@@ -827,3 +878,18 @@ pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 1
                    main = "Top 100 most significant regulated genes", border_color = "black" )
 dev.off()
 
+# graph for first 100 top regulated genes for res_ash rlog
+#mypalette <- brewer.pal(11, "RdYlBu")
+#morecols <- colorRampPalette(mypalette)
+#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
+#topVarGenes_res <- resAsh_filter$EnsemblID[1:100]
+rownames(rlog) <- gsub("\\..*","",rownames(rlog))
+mat  <- assay(rlog)[ topVarGenes_res, ]
+mat  <- mat - rowMeans(mat)
+annocol <- as.data.frame(colData(rlog)[,1,drop=FALSE])
+pdf(file.path(opt$output,"Top100.rlog.res.ash.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
+pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
+                   cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
+                   treeheight_row = 150, annotation_colors = ann_colors, 
+                   main = "Top 100 most significant regulated genes", border_color = "black" )
+dev.off()
