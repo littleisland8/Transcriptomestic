@@ -1,0 +1,5 @@
+sampleName	fileName	condition	group
+1178	1178.STAR.gene.count	TUMOR	1178
+1463	1463.STAR.gene.count	CONTROL	1463
+2020	2020.STAR.gene.count	CONTROL	2020
+2159	2159.STAR.gene.count	TUMOR	2159
