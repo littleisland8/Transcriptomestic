@@ -10,43 +10,35 @@ include: "rules/featureCounts.smk"
 include: "rules/DESeqFromHTSeqCount.smk"
 include: "rules/DESeqFromFeatureCounts.smk"
 
-rule fastqc:
-	input:
-		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
-		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values())
-
-rule STAR:
-	input:
-		"resources/GRCh38_full_analysis_set_plus_decoy_hla_STAR/Log.out",
-		expand(f"alignments/{{sample}}.{{aligner}}.Aligned.sortedByCoord.out.bam.bai", sample=config["samples"].values(), aligner=config["aligners"].values())
-
-rule hisat2:
-	input:
-		directory("resources" + "/" + config["genome"].split("resources/")[1].split(".fa")[0] + "_hisat2"),
-		expand(f"alignments/{{sample}}.hisat2.bam", sample=config["samples"].values())
-
 rule BigWig:
 	input:
-		expand(f"alignments/{{sample}}.{{aligner}}.bw", sample=config["samples"].values(), aligner=config["aligners"].values())
-
-rule Htseq:
-	input:
-		expand(f"count/htseq/{{sample}}.{{aligner}}.gene.count", sample=config["samples"].values(), aligner=config["aligners"].values())
-
-rule featurecounts:
-		input:
-			expand(f"count/featureCounts/{{sample}}.{{aligner}}.gene.count.featureCounts.tsv", sample=config["samples"].values(), aligner=config["aligners"].values())
+		expand(f"alignments/{{sample}}.STAR.bw", sample=config["samples"].values()),
+		expand(f"alignments/{{sample}}.hisat2.bw", sample=config["samples"].values())
 
 rule STAR_HTSeq:
 	input:
 		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
-		expand(f"count/htseq/{{sample}}.{{aligner}}.gene.count", sample=config["samples"].values(), aligner=config["aligners"].values()),
+		expand(f"count/htseq/{{sample}}.STAR.gene.count", sample=config["samples"].values()),
 		directory("results/STAR_HTseq")
 
 rule STAR_featureCounts:
 	input:
 		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
-		expand(f"count/featureCounts/{{sample}}.{{aligner}}.gene.count.featureCounts.tsv", sample=config["samples"].values(), aligner=config["aligners"].values()),
+		expand(f"count/featureCounts/{{sample}}.STAR.gene.count.featureCounts.tsv", sample=config["samples"].values()),
 		directory("results/STAR_featureCounts")
+
+rule Hisat2_HTSeq:
+	input:
+		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
+		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
+		expand(f"count/htseq/{{sample}}.hisat2.gene.count", sample=config["samples"].values()),
+		directory("results/Hisat2_HTseq")
+
+rule Hisat2_featureCounts:
+	input:
+		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
+		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
+		expand(f"count/featureCounts/{{sample}}.hisat2.gene.count.featureCounts.tsv", sample=config["samples"].values()),
+		directory("results/Hisat2_featureCounts")

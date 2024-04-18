@@ -38,13 +38,13 @@ rule STARAlign:
     shell:
         "STAR --runThreadN {threads} --readFilesCommand {params.readFilesCommand} --outFileNamePrefix alignments/{wildcards.sample}.STAR. --outSAMunmapped Within --outFilterMismatchNmax 10 --quantMode TranscriptomeSAM GeneCounts --chimSegmentMin 15 --outSAMtype BAM SortedByCoordinate --genomeDir {input.idx} --readFilesIn {input.R1} {input.R2} 2>{log}"
 
-rule SamtoolsIndex:
+rule SamtoolsIndexSTAR:
     input:
-        "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam",
+        "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam"
     output:
         "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai",
     log:
-        "logs/{sample}.SamtoolsIndex.log",
+        "logs/{sample}.SamtoolsIndexSTAR.log",
     params:
         extra="",  # optional params string
     threads: 4  # This value - 1 will be sent to -@

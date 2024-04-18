@@ -21,6 +21,19 @@ rule hisat2Align:
         "logs/{sample}.hisat2Align.log",
     params:
         extra="",
-    threads: 2
+    threads: 5
     wrapper:
         "v3.8.0/bio/hisat2/align"
+
+rule SamtoolsIndexHisat2:
+    input:
+        "alignments/{sample}.hisat2.bam"
+    output:
+        "alignments/{sample}.hisat2.bam.bai",
+    log:
+        "logs/{sample}.SamtoolsIndexHisat2.log",
+    params:
+        extra="",  # optional params string
+    threads: 4  # This value - 1 will be sent to -@
+    wrapper:
+        "v3.3.6/bio/samtools/index"
