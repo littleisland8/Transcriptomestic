@@ -3,6 +3,7 @@ configfile: "config/config.yaml"
 include: "rules/fastqc.smk"
 include: "rules/fastp.smk"
 include: "rules/STAR.smk"
+include: "rules/hisat2.smk"
 include: "rules/BigWig.smk"
 include: "rules/htseq.smk"
 include: "rules/featureCounts.smk"
@@ -16,8 +17,13 @@ rule fastqc:
 
 rule STAR:
 	input:
-		"resources/GRCh38_full_analysis_set_plus_decoy_hla/Log.out",
-		expand(f"alignments/{{sample}}.{{aligner}}.STAR.Aligned.sortedByCoord.out.bam.bai", sample=config["samples"].values(), aligner=config["aligners"].values())
+		"resources/GRCh38_full_analysis_set_plus_decoy_hla_STAR/Log.out",
+		expand(f"alignments/{{sample}}.{{aligner}}.Aligned.sortedByCoord.out.bam.bai", sample=config["samples"].values(), aligner=config["aligners"].values())
+
+rule hisat2:
+	input:
+		directory("resources" + "/" + config["genome"].split("resources/")[1].split(".fa")[0] + "_hisat2"),
+		expand(f"alignments/{{sample}}.hisat2.bam", sample=config["samples"].values())
 
 rule BigWig:
 	input:

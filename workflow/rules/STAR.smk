@@ -2,8 +2,8 @@ rule STARIndex:
     input:
         fasta=config["genome"],
     output:
-        log="resources/GRCh38_full_analysis_set_plus_decoy_hla/Log.out",
-        idx=directory("resources/GRCh38_full_analysis_set_plus_decoy_hla")
+        log="resources/GRCh38_full_analysis_set_plus_decoy_hla_STAR/Log.out",
+        idx=directory("resources/GRCh38_full_analysis_set_plus_decoy_hla_STAR")
     message:
         "STAR index"
     threads: 5
@@ -13,14 +13,14 @@ rule STARIndex:
         sjdbOverhang=str(config["sjdbOverhang"]),
         gtf=config["gtf"]
     log:
-        "logs/star_index_GRCh38_full_analysis_set_plus_decoy_hla.fa.log"
+        "logs/star_index.log"
     shell:
         "STAR --runMode genomeGenerate --genomeDir {output.idx} --genomeFastaFiles {input} --sjdbGTFfile {params.gtf} --sjdbOverhang {params.sjdbOverhang} 2>{log}"    
 
 rule STARAlign:
     input:
-        log="resources/GRCh38_full_analysis_set_plus_decoy_hla/Log.out",
-        idx=directory("resources/GRCh38_full_analysis_set_plus_decoy_hla"),
+        log="resources/GRCh38_full_analysis_set_plus_decoy_hla_STAR/Log.out",
+        idx=directory("resources/GRCh38_full_analysis_set_plus_decoy_hla_STAR"),
         R1="data/{sample}.R1.tr.fastq.gz",
         R2="data/{sample}.R2.tr.fastq.gz"
     output:
