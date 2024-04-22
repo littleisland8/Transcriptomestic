@@ -13,23 +13,39 @@ rule hisat2_index:
 
 rule hisat2Align:
     input:
-        reads=["data/{sample}.R1.tr.fastq.gz", "data/{sample}.R2.tr.fastq.gz"],
+        R1="data/{sample}.R1.tr.fastq.gz", 
+        R2="data/{sample}.R2.tr.fastq.gz",
         idx="resources" + "/" + config["genome"].split("resources/")[1].split(".fa")[0] + "_hisat2"
     output:
-        "alignments/{sample}.hisat2.bam",
-    log:
-        "logs/{sample}.hisat2Align.log",
-    params:
-        extra="",
+        "alignments/{sample}.hisat2.bam"
     threads: 5
-    wrapper:
-        "v3.8.0/bio/hisat2/align"
+    conda: 
+        "../envs/hisat2.yaml"
+    log:
+        "logs/{sample}.hisat2Align.log"
+    params:
+        strandness=config["rna_strandness"]
+    shell:
+        "hisat2 -p {threads} -x {input.idx} --rna-strandness {params.strandness} -1 {input.R1} -2 {input.R2} | samtools view -Sbh -o {output} 2>{log}"
 
-rule SamtoolsIndexHisat2:
+rule SamtoolsSortHisat2:
     input:
         "alignments/{sample}.hisat2.bam"
     output:
-        "alignments/{sample}.hisat2.bam.bai",
+        "alignments/{sample}.hisat2.srt.bam"
+    log:
+        "{sample}.log",
+    params:
+        extra="-m 4G",
+    threads: 5
+    wrapper:
+        "v3.8.0/bio/samtools/sort"
+
+rule SamtoolsIndexHisat2:
+    input:
+        "alignments/{sample}.hisat2.srt.bam"
+    output:
+        "alignments/{sample}.hisat2.srt.bam.bai",
     log:
         "logs/{sample}.SamtoolsIndexHisat2.log",
     params:

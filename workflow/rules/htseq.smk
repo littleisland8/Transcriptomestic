@@ -21,8 +21,8 @@ rule HtseqcountGeneFromSTAR:
 
 rule HtseqcountGeneFromHisat2:
 	input:
-		bam="alignments/{sample}.hisat2.bam",
-		bai="alignments/{sample}.hisat2.bam.bai"
+		bam="alignments/{sample}.hisat2.srt.bam",
+		bai="alignments/{sample}.hisat2.srt.bam.bai"
 	output:
 		"count/htseq/{sample}.hisat2.gene.count"
 	threads: 1

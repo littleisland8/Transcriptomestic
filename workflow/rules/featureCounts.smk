@@ -21,8 +21,8 @@ rule featureCountsSTAR:
 
 rule featureCountsHisat2:
 	input:
-		bam="alignments/{sample}.hisat2.bam",
-		bai="alignments/{sample}.hisat2.bam.bai"
+		bam="alignments/{sample}.hisat2.srt.bam",
+		bai="alignments/{sample}.hisat2.srt.bam.bai"
 	output:
 		"count/featureCounts/{sample}.hisat2.gene.count.featureCounts.tsv"
 	threads: 10
