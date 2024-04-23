@@ -3,7 +3,7 @@ rule featureCountsSTAR:
 		bam="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam",
 		bai="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai"
 	output:
-		"count/featureCounts/{sample}.STAR.gene.count.featureCounts.tsv"
+		"count/featureCounts/STAR/{sample}.STAR.gene.count.featureCounts.tsv"
 	threads: 10
 	conda:
 		"../envs/featureCounts.yaml"
@@ -24,7 +24,7 @@ rule featureCountsHisat2:
 		bam="alignments/{sample}.hisat2.srt.bam",
 		bai="alignments/{sample}.hisat2.srt.bam.bai"
 	output:
-		"count/featureCounts/{sample}.hisat2.gene.count.featureCounts.tsv"
+		"count/featureCounts/hisat2/{sample}.hisat2.gene.count.featureCounts.tsv"
 	threads: 10
 	conda:
 		"../envs/featureCounts.yaml"
