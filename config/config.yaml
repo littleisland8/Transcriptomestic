@@ -9,9 +9,6 @@ samples:
     sample3: 2020
     sample4: 2159
 
-aligners:
-   aligner1: STAR
-
 strand:
    R1: R1
    R2: R2
@@ -21,9 +18,14 @@ genome: resources/GRCh38_full_analysis_set_plus_decoy_hla.fa #Add genome.fa in r
 gtf: resources/Homo_sapiens.GRCh38.111.gtf
 
 ################################
-# STAR genome index paramaters #
+# STAR genome index parameters #
 ################################
 sjdbOverhang: #74 #Put max read length -1
+
+################################
+# Hisat2 parameter #
+################################
+rna_strandness: RF #FR or RF
 
 ####################
 # HTSeq paramaters #
@@ -46,8 +48,8 @@ featureCounts_extra: ' -p --countReadPairs'                             # add if
 DESeqFromHTSeqCount:
    count: 10
    alpha: 0.05
-   height: 10
-   width: 10
+   height: 15
+   width: 15
 
 DESeqFromFeatureCounts:
    count: 10
