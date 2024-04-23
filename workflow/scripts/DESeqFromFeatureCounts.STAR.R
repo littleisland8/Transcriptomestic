@@ -57,7 +57,7 @@ if (dir.exists(opt$output)){
 }
 
 #Define path and list of featureCounts read counts files.
-indir <- file.path(getwd(),"count/featureCounts/")
+indir <- file.path(getwd(),"count/featureCounts/STAR")
 
 files_counts <- list.files(indir,"*.tsv$", full.names = T)
 

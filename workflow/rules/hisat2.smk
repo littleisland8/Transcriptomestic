@@ -34,7 +34,7 @@ rule SamtoolsSortHisat2:
     output:
         "alignments/{sample}.hisat2.srt.bam"
     log:
-        "{sample}.log",
+        "logs/{sample}.SamtoolsSortHisat2.log",
     params:
         extra="-m 4G",
     threads: 5

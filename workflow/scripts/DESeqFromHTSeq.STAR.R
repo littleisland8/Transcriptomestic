@@ -57,7 +57,7 @@ if (dir.exists(opt$output)){
 
 
 #Define path and list of featureCounts read counts files.
-indir <- file.path(getwd(),"count/htseq/")
+indir <- file.path(getwd(),"count/htseq/STAR")
 
 files_counts <- list.files(indir,"*.count$", full.names = T)
 

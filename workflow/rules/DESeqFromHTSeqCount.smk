@@ -12,7 +12,7 @@ rule DESeqFromHTSeqCountSTAR:
 	log:
 		"logs/DESeqFromHTSeq.log"
 	params:
-		script="workflow/scripts/DESeqFromHTSeq.R",
+		script="workflow/scripts/DESeqFromHTSeq.STAR.R",
 		counts=config["DESeqFromHTSeqCount"]["count"],
 		alpha=config["DESeqFromHTSeqCount"]["alpha"], 
 		height=config["DESeqFromHTSeqCount"]["height"],
@@ -34,7 +34,7 @@ rule DESeqFromHTSeqCountHisat2:
 	log:
 		"logs/DESeqFromHTSeq.log"
 	params:
-		script="workflow/scripts/DESeqFromHTSeq.R",
+		script="workflow/scripts/DESeqFromHTSeq.hisat2.R",
 		counts=config["DESeqFromHTSeqCount"]["count"],
 		alpha=config["DESeqFromHTSeqCount"]["alpha"], 
 		height=config["DESeqFromHTSeqCount"]["height"],

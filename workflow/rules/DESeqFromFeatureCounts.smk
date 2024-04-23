@@ -12,7 +12,7 @@ rule DESeqFromFeatureCountsSTAR:
 	log:
 		"logs/DESeqFromFeatureCountsSTAR.log"
 	params:
-		script="workflow/scripts/DESeqFromFeatureCounts.R",
+		script="workflow/scripts/DESeqFromFeatureCounts.STAR.R",
 		counts=config["DESeqFromFeatureCounts"]["count"],
 		alpha=config["DESeqFromFeatureCounts"]["alpha"], 
 		height=config["DESeqFromFeatureCounts"]["height"],
@@ -34,7 +34,7 @@ rule DESeqFromFeatureCountsHisat2:
 	log:
 		"logs/DESeqFromFeatureCountsHisat2.log"
 	params:
-		script="workflow/scripts/DESeqFromFeatureCounts.R",
+		script="workflow/scripts/DESeqFromFeatureCounts.hisat2.R",
 		counts=config["DESeqFromFeatureCounts"]["count"],
 		alpha=config["DESeqFromFeatureCounts"]["alpha"], 
 		height=config["DESeqFromFeatureCounts"]["height"],
