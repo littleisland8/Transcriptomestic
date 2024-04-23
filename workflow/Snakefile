@@ -19,26 +19,26 @@ rule STAR_HTSeq:
 	input:
 		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
-		expand(f"count/htseq/{{sample}}.STAR.gene.count", sample=config["samples"].values()),
+		expand(f"count/htseq/STAR/{{sample}}.STAR.gene.count", sample=config["samples"].values()),
 		directory("results/STAR_HTseq")
 
 rule STAR_featureCounts:
 	input:
 		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
-		expand(f"count/featureCounts/{{sample}}.STAR.gene.count.featureCounts.tsv", sample=config["samples"].values()),
+		expand(f"count/featureCounts/STAR/{{sample}}.STAR.gene.count.featureCounts.tsv", sample=config["samples"].values()),
 		directory("results/STAR_featureCounts")
 
 rule Hisat2_HTSeq:
 	input:
 		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
-		expand(f"count/htseq/{{sample}}.hisat2.gene.count", sample=config["samples"].values()),
+		expand(f"count/htseq/hisat2/{{sample}}.hisat2.gene.count", sample=config["samples"].values()),
 		directory("results/Hisat2_HTseq")
 
 rule Hisat2_featureCounts:
 	input:
 		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
-		expand(f"count/featureCounts/{{sample}}.hisat2.gene.count.featureCounts.tsv", sample=config["samples"].values()),
+		expand(f"count/featureCounts/hisat2/{{sample}}.hisat2.gene.count.featureCounts.tsv", sample=config["samples"].values()),
 		directory("results/Hisat2_featureCounts")
