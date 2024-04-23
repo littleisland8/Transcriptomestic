@@ -1,7 +1,7 @@
 rule DESeqFromFeatureCountsSTAR:
 	input:
 		table="resources/example_sampleTable.STAR.FeatureCounts.tsv",
-		counts=expand(f"count/featureCounts/{{sample}}.STAR.gene.count.featureCounts.tsv", sample=config["samples"].values())
+		counts=expand(f"count/featureCounts/STAR/{{sample}}.STAR.gene.count.featureCounts.tsv", sample=config["samples"].values())
 	output:
 		directory("results/STAR_featureCounts/")
 	threads: 1
@@ -23,7 +23,7 @@ rule DESeqFromFeatureCountsSTAR:
 rule DESeqFromFeatureCountsHisat2:
 	input:
 		table="resources/example_sampleTable.hisat2.FeatureCounts.tsv",
-		counts=expand(f"count/featureCounts/{{sample}}.hisat2.gene.count.featureCounts.tsv", sample=config["samples"].values())
+		counts=expand(f"count/featureCounts/hisat2/{{sample}}.hisat2.gene.count.featureCounts.tsv", sample=config["samples"].values())
 	output:
 		directory("results/Hisat2_featureCounts/")
 	threads: 1
