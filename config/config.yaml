@@ -41,6 +41,11 @@ strandedfeatureCounts: 1                                                # Modify
 featureCounts_extra: ' -p --countReadPairs'                             # add if paired_end
 #featureCounts_extra: ' -O --fracOverlap 0.2 -p --countReadPairs'       # add if paired_end and count reads of overlapping genes
 
+############################
+# salmon parameters #
+############################
+libType: ISR #ISF or IU
+
 #awk 'NR%4 == 2 {lengths[length($0)]++} END {for (l in lengths) {print l, lengths[l]}}' 1178.R1.sub.fastq
 
 #DESeq from HTSeq count parameters

@@ -7,8 +7,13 @@ include: "rules/hisat2.smk"
 include: "rules/BigWig.smk"
 include: "rules/htseq.smk"
 include: "rules/featureCounts.smk"
+include: "rules/salmon.smk"
 include: "rules/DESeqFromHTSeqCount.smk"
 include: "rules/DESeqFromFeatureCounts.smk"
+
+rule Salmon:
+	input:
+		directory("resources/GRCh38_full_analysis_set_plus_decoy_hla_salmon")
 
 rule BigWig:
 	input:
