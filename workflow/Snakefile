@@ -13,7 +13,8 @@ include: "rules/DESeqFromFeatureCounts.smk"
 
 rule Salmon:
 	input:
-		directory("resources/GRCh38_full_analysis_set_plus_decoy_hla_salmon")
+		directory("resources/GRCh38_full_analysis_set_plus_decoy_hla_salmon"),
+		expand(f"results/{{sample}}_salmon/quant.sf", sample=config["samples"].values())
 
 rule BigWig:
 	input:
