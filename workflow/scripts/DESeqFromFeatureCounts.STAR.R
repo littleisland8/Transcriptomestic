@@ -79,7 +79,7 @@ rownames(countData) <- countData$GeneID
 countData <- countData[,c(2:ncol(countData))]
 
 # export table countdata
-write.table(countData, file.path(opt$output,"countdata_featurecounts.txt"), quote = FALSE, sep = "\t", row.names = TRUE)
+write.table(countData, file.path(opt$output,"countdata_FeatureCounts.txt"), quote = FALSE, sep = "\t", row.names = TRUE)
 
 #Countdata generation
 #Convert to matrix
