@@ -356,17 +356,30 @@ ResAnnotation <- function (restable){
 
 res <- ResAnnotation(res)
 
+#Volcano
+keyvals.colour=rep("gray", nrow(res))
+names(keyvals.colour)=rep("Not Significant", nrow(res))
+keyvals.colour[which(res$log2FoldChange > 0.5)] = "red3"
+names(keyvals.colour)[which(res$log2FoldChange > 0.5)] = "UP"
+keyvals.colour[which(res$log2FoldChange< -0.5)] = "dodgerblue2"
+names(keyvals.colour)[which(res$log2FoldChange< -0.5)] = "DOWN"
+keyvals.colour[which(res$pvalue>0.1)] = "gray"
+names(keyvals.colour)[which(res$pvalue>0.1)] = "Not Significant"
+
 pdf(file.path(opt$output,"VolcanoPlot.results.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
-EnhancedVolcano(res,
-								lab = res$symbol,
-								x = 'log2FoldChange',
-								y = 'padj',
-								FCcutoff = 1.5,
-								pCutoff = 0.05,
-								title = "Volcano Plot")
+EnhancedVolcano(res, 
+								lab=res$Genes, 
+								labFace="bold", 
+								x="log2FoldChange", 
+								y="pvalue", 
+								xlim=c(-6, 6), 
+								title="DEGs", 
+								pCutoff=0.1, 
+								FCcutoff=0.5, 
+								colCustom= keyvals.colour, 
+								colAlpha=1)
+
 dev.off()
-
-
 
 ## lfcShrink function to shrink the log2 fold changes for the comparison of dex Tumor vs Control samples
 resLFC <- lfcShrink(dds, coef="condition_TUMOR_vs_CONTROL", type="apeglm", res = res)
@@ -374,8 +387,8 @@ resNorm <- lfcShrink(dds, coef="condition_TUMOR_vs_CONTROL", type="normal", res 
 resAsh <- lfcShrink(dds, coef="condition_TUMOR_vs_CONTROL", type="ashr", res = res)
 
 #Independent hypothesis weighting
-resIHW <- results(dds, filterFun=ihw, alpha = 0.05)
-metadata(resIHW)$ihwResult
+#resIHW <- results(dds, filterFun=ihw, alpha = 0.05)
+#metadata(resIHW)$ihwResult
 
 ## Export MA plot
 pdf(file.path(opt$output,"multipleMAplot.pdf"),height = as.numeric(opt$Height), width = as.numeric(opt$width))
@@ -390,42 +403,87 @@ dev.off()
 #resApeglm
 resApeglm <- ResAnnotation(resLFC)
 
+#Volcano
+keyvals.colour=rep("gray", nrow(resApeglm))
+names(keyvals.colour)=rep("Not Significant", nrow(resApeglm))
+keyvals.colour[which(resApeglm$log2FoldChange > 0.5)] = "red3"
+names(keyvals.colour)[which(resApeglm$log2FoldChange > 0.5)] = "UP"
+keyvals.colour[which(resApeglm$log2FoldChange< -0.5)] = "dodgerblue2"
+names(keyvals.colour)[which(resApeglm$log2FoldChange< -0.5)] = "DOWN"
+keyvals.colour[which(resApeglm$pvalue>0.1)] = "gray"
+names(keyvals.colour)[which(resApeglm$pvalue>0.1)] = "Not Significant"
+
 pdf(file.path(opt$output,"VolcanoPlot.apeglm.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
-EnhancedVolcano(resApeglm,
-								lab = resApeglm$symbol,
-								x = 'log2FoldChange',
-								y = 'padj',
-								FCcutoff = 1.5,
-								pCutoff = 0.05,
-								title = "Volcano Plot")
+EnhancedVolcano(resApeglm, 
+								lab=resApeglm$Genes, 
+								labFace="bold", 
+								x="log2FoldChange", 
+								y="pvalue", 
+								xlim=c(-6, 6), 
+								title="DEGs", 
+								pCutoff=0.1, 
+								FCcutoff=0.5, 
+								colCustom= keyvals.colour, 
+								colAlpha=1)
+
 dev.off()
 
 
 #resNorm
 resNorm <- ResAnnotation(resNorm)
 
+#Volcano
+keyvals.colour=rep("gray", nrow(resNorm))
+names(keyvals.colour)=rep("Not Significant", nrow(resNorm))
+keyvals.colour[which(resNorm$log2FoldChange > 0.5)] = "red3"
+names(keyvals.colour)[which(resNorm$log2FoldChange > 0.5)] = "UP"
+keyvals.colour[which(resNorm$log2FoldChange< -0.5)] = "dodgerblue2"
+names(keyvals.colour)[which(resNorm$log2FoldChange< -0.5)] = "DOWN"
+keyvals.colour[which(resNorm$pvalue>0.1)] = "gray"
+names(keyvals.colour)[which(resNorm$pvalue>0.1)] = "Not Significant"
+
 pdf(file.path(opt$output,"VolcanoPlot.Normal.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
-EnhancedVolcano(resNorm,
-								lab = resNorm$symbol,
-								x = 'log2FoldChange',
-								y = 'padj',
-								FCcutoff = 1.5,
-								pCutoff = 0.05,
-								title = "Volcano Plot")
+EnhancedVolcano(resNorm, 
+								lab=resNorm$Genes, 
+								labFace="bold", 
+								x="log2FoldChange", 
+								y="pvalue", 
+								xlim=c(-6, 6), 
+								title="DEGs", 
+								pCutoff=0.1, 
+								FCcutoff=0.5, 
+								colCustom= keyvals.colour, 
+								colAlpha=1)
+
 dev.off()
 
 
 #resAsh
 resAsh <- ResAnnotation(resAsh)
 
-pdf(file.path(opt$output,"VolcanoPlot.Normal.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
-EnhancedVolcano(resAsh,
-								lab = resAsh$symbol,
-								x = 'log2FoldChange',
-								y = 'padj',
-								FCcutoff = 1.5,
-								pCutoff = 0.05,
-								title = "Volcano Plot")
+#Volcano
+keyvals.colour=rep("gray", nrow(resAsh))
+names(keyvals.colour)=rep("Not Significant", nrow(resAsh))
+keyvals.colour[which(resAsh$log2FoldChange > 0.5)] = "red3"
+names(keyvals.colour)[which(resAsh$log2FoldChange > 0.5)] = "UP"
+keyvals.colour[which(resAsh$log2FoldChange< -0.5)] = "dodgerblue2"
+names(keyvals.colour)[which(resAsh$log2FoldChange< -0.5)] = "DOWN"
+keyvals.colour[which(resAsh$pvalue>0.1)] = "gray"
+names(keyvals.colour)[which(resAsh$pvalue>0.1)] = "Not Significant"
+
+pdf(file.path(opt$output,"VolcanoPlot.Ash.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
+EnhancedVolcano(resAsh, 
+								lab=resAsh$Genes, 
+								labFace="bold", 
+								x="log2FoldChange", 
+								y="pvalue", 
+								xlim=c(-6, 6), 
+								title="DEGs", 
+								pCutoff=0.1, 
+								FCcutoff=0.5, 
+								colCustom= keyvals.colour, 
+								colAlpha=1)
+
 dev.off()
 
 
