@@ -368,7 +368,7 @@ names(keyvals.colour)[which(res$pvalue>0.1)] = "Not Significant"
 
 pdf(file.path(opt$output,"VolcanoPlot.results.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 EnhancedVolcano(res, 
-								lab=res$Genes, 
+								lab=res$symbol, 
 								labFace="bold", 
 								x="log2FoldChange", 
 								y="pvalue", 
@@ -416,7 +416,7 @@ names(keyvals.colour)[which(resApeglm$pvalue>0.1)] = "Not Significant"
 
 pdf(file.path(opt$output,"VolcanoPlot.apeglm.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 EnhancedVolcano(resApeglm, 
-								lab=resApeglm$Genes, 
+								lab=resApeglm$symbol, 
 								labFace="bold", 
 								x="log2FoldChange", 
 								y="pvalue", 
@@ -445,7 +445,7 @@ names(keyvals.colour)[which(resNorm$pvalue>0.1)] = "Not Significant"
 
 pdf(file.path(opt$output,"VolcanoPlot.Normal.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 EnhancedVolcano(resNorm, 
-								lab=resNorm$Genes, 
+								lab=resNorm$symbol, 
 								labFace="bold", 
 								x="log2FoldChange", 
 								y="pvalue", 
@@ -474,7 +474,7 @@ names(keyvals.colour)[which(resAsh$pvalue>0.1)] = "Not Significant"
 
 pdf(file.path(opt$output,"VolcanoPlot.Ash.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 EnhancedVolcano(resAsh, 
-								lab=resAsh$Genes, 
+								lab=resAsh$symbol, 
 								labFace="bold", 
 								x="log2FoldChange", 
 								y="pvalue", 
