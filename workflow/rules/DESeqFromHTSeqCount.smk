@@ -3,7 +3,7 @@ rule DESeqFromHTSeqCountSTAR:
 		table="resources/example_sampleTable.STAR.HTSeq.tsv",
 		counts=expand(f"count/htseq/STAR/{{sample}}.STAR.gene.count", sample=config["samples"].values())
 	output:
-		directory("results/STAR_HTseq")
+		directory("results/STAR_HTSeq")
 	threads: 1
 	conda:
 		"../envs/DESeqFromHTSeq.yaml"
@@ -25,7 +25,7 @@ rule DESeqFromHTSeqCountHisat2:
 		table="resources/example_sampleTable.hisat2.HTSeq.tsv",
 		counts=expand(f"count/htseq/hisat2/{{sample}}.hisat2.gene.count", sample=config["samples"].values())
 	output:
-		directory("results/Hisat2_HTseq")
+		directory("results/Hisat2_HTSeq")
 	threads: 1
 	conda:
 		"../envs/DESeqFromHTSeq.yaml"

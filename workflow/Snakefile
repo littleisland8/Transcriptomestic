@@ -11,11 +11,6 @@ include: "rules/salmon.smk"
 include: "rules/DESeqFromHTSeqCount.smk"
 include: "rules/DESeqFromFeatureCounts.smk"
 
-rule Salmon:
-	input:
-		directory("resources/GRCh38_full_analysis_set_plus_decoy_hla_salmon"),
-		expand(f"results/{{sample}}_salmon/quant.sf", sample=config["samples"].values())
-
 rule BigWig:
 	input:
 		expand(f"alignments/{{sample}}.STAR.bw", sample=config["samples"].values()),
@@ -26,7 +21,7 @@ rule STAR_HTSeq:
 		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 		expand(f"count/htseq/STAR/{{sample}}.STAR.gene.count", sample=config["samples"].values()),
-		directory("results/STAR_HTseq")
+		directory("results/STAR_HTSeq")
 
 rule STAR_featureCounts:
 	input:
@@ -48,3 +43,8 @@ rule Hisat2_featureCounts:
 		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 		expand(f"count/featureCounts/hisat2/{{sample}}.hisat2.gene.count.featureCounts.tsv", sample=config["samples"].values()),
 		directory("results/Hisat2_featureCounts")
+
+rule Salmon:
+	input:
+		directory("resources/GRCh38_full_analysis_set_plus_decoy_hla_salmon"),
+		expand(f"count/{{sample}}_salmon/quant.sf", sample=config["samples"].values())

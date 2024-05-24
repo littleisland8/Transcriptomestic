@@ -17,7 +17,7 @@ rule SalmonQuant:
 		R1="data/{sample}.R1.tr.fastq.gz",
 		R2="data/{sample}.R2.tr.fastq.gz"
 	output:
-		"results/{sample}_salmon/quant.sf"
+		"count/{sample}_salmon/quant.sf"
 	threads: 1
 	log:
 		"logs/{sample}.SalmonQuant.log"
@@ -26,4 +26,4 @@ rule SalmonQuant:
 	params:
 		libType=config["libType"]
 	shell:
-		"salmon quant -p 20 -i {input.idx} -l {params.libType} -1 <(zcat {input.R1}) -2 <(zcat {input.R2}) -o results/{wildcards.sample}_salmon --validateMappings --gcBias 2>{log}"
+		"salmon quant -p 20 -i {input.idx} -l {params.libType} -1 <(zcat {input.R1}) -2 <(zcat {input.R2}) -o count/{wildcards.sample}_salmon --validateMappings --gcBias 2>{log}"
