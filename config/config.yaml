@@ -15,6 +15,8 @@ strand:
 
 genome: resources/GRCh38_full_analysis_set_plus_decoy_hla.fa #Add genome.fa in resources dir
 
+gentrome: resources/gentrome.fa.gz
+
 gtf: resources/Homo_sapiens.GRCh38.111.gtf
 
 ################################
