@@ -1,19 +1,21 @@
 rule SalmonIndex:
 	input:
-		fasta=config["genome"]
+		fasta=config["gentrome"]
 	output:
-		directory("resources/GRCh38_full_analysis_set_plus_decoy_hla_salmon")
+		directory("resources/salmon_idx")
 	threads: 1
 	log:
 		"logs/SalmonIndex.log"
 	conda:
 		"../envs/salmon.yaml"
+	params:
+		decoy="resources/decoys.txt"
 	shell:
-		"salmon index -t {input.fasta} -i {output} 2>{log}"
+		"salmon index -t {input.fasta} -d {params.decoy} -p {threads} -i {output} --gencode 2>{log}"
 
 rule SalmonQuant:
 	input:
-		idx=directory("resources/GRCh38_full_analysis_set_plus_decoy_hla_salmon"),
+		idx=directory("resources/salmon_idx"),
 		R1="data/{sample}.R1.tr.fastq.gz",
 		R2="data/{sample}.R2.tr.fastq.gz"
 	output:

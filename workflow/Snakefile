@@ -46,5 +46,5 @@ rule Hisat2_featureCounts:
 
 rule Salmon:
 	input:
-		directory("resources/GRCh38_full_analysis_set_plus_decoy_hla_salmon"),
-		expand(f"count/{{sample}}_salmon/quant.sf", sample=config["samples"].values())
+		directory("resources/salmon_idx"),
+		#expand(f"count/{{sample}}_salmon/quant.sf", sample=config["samples"].values())
