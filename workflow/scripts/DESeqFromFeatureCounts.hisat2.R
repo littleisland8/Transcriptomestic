@@ -397,7 +397,7 @@ xlim <- c(1,1e5); ylim <- c(-10,10)
 plotMA(resLFC, xlim=xlim, ylim=ylim, main="apeglm")
 plotMA(resNorm, xlim=xlim, ylim=ylim, main="normal")
 plotMA(resAsh, xlim=xlim, ylim=ylim, main="ashr")
-plotMA(resIHW, xlim=xlim, ylim=ylim, main="Independent Hypotesis Weighting")
+#plotMA(resIHW, xlim=xlim, ylim=ylim, main="Independent Hypotesis Weighting")
 dev.off()
 
 #resApeglm

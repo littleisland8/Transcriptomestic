@@ -372,7 +372,7 @@ names(keyvals.colour)[which(res$pvalue>0.1)] = "Not Significant"
 
 pdf(file.path(opt$output,"VolcanoPlot.results.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 EnhancedVolcano(res, 
-								lab=res$Genes, 
+								lab=res$symbol, 
 								labFace="bold", 
 								x="log2FoldChange", 
 								y="pvalue", 
@@ -401,7 +401,7 @@ xlim <- c(1,1e5); ylim <- c(-10,10)
 plotMA(resLFC, xlim=xlim, ylim=ylim, main="apeglm")
 plotMA(resNorm, xlim=xlim, ylim=ylim, main="normal")
 plotMA(resAsh, xlim=xlim, ylim=ylim, main="ashr")
-plotMA(resIHW, xlim=xlim, ylim=ylim, main="Independent Hypotesis Weighting")
+#plotMA(resIHW, xlim=xlim, ylim=ylim, main="Independent Hypotesis Weighting")
 dev.off()
 
 #resApeglm
@@ -419,7 +419,7 @@ names(keyvals.colour)[which(resApeglm$pvalue>0.1)] = "Not Significant"
 
 pdf(file.path(opt$output,"VolcanoPlot.apeglm.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 EnhancedVolcano(resApeglm, 
-								lab=resApeglm$Genes, 
+								lab=resApeglm$symbol, 
 								labFace="bold", 
 								x="log2FoldChange", 
 								y="pvalue", 
@@ -448,7 +448,7 @@ names(keyvals.colour)[which(resNorm$pvalue>0.1)] = "Not Significant"
 
 pdf(file.path(opt$output,"VolcanoPlot.Normal.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 EnhancedVolcano(resNorm, 
-								lab=resNorm$Genes, 
+								lab=resNorm$symbol, 
 								labFace="bold", 
 								x="log2FoldChange", 
 								y="pvalue", 
@@ -477,7 +477,7 @@ names(keyvals.colour)[which(resAsh$pvalue>0.1)] = "Not Significant"
 
 pdf(file.path(opt$output,"VolcanoPlot.Ash.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 EnhancedVolcano(resAsh, 
-								lab=resAsh$Genes, 
+								lab=resAsh$symbol, 
 								labFace="bold", 
 								x="log2FoldChange", 
 								y="pvalue", 
