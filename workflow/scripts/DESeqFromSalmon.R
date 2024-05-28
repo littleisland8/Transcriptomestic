@@ -71,7 +71,7 @@ names(files) <- unlist(strsplit(list.files(path = file.path(getwd(),"count/"), p
 tx2gene <- read.delim(file.path(getwd(),"resources/tx2gene_grch38_ens94.txt"))
 
 # Run tximport
-txi <- tximport(files, type="salmon",txOut=TRUE, countsFromAbundance="lengthScaledTPM", ignoreTxVersion = TRUE, tx2gene=tx2gene)
+txi <- tximport(files, type="salmon",txOut=FALSE, countsFromAbundance="lengthScaledTPM", ignoreTxVersion = TRUE, tx2gene=tx2gene)
 
 #preprocessing
 sampleTable <- read.table(opt$sampletable, sep="\t", header=TRUE)
@@ -98,12 +98,11 @@ condition <- factor(sampleTable$condition)
 
 # Create a coldata frame and instantiate the DESeqDataSet. See ?DESeqDataSetFromMatrix
 (coldata <- data.frame(row.names=colnames(countdata), condition))
-rownames(coldata) <- names
 
 ## Filter low counts gene, filter out genes (row) with no count
 smallestGroupSize <- min(c(length(which(sampleTable$condition == "TUMOR")),length(which(sampleTable$condition == "CONTROL"))))
-keep <- rowSums(counts(ddsHTSeq) >= as.numeric(opt$count)) >= smallestGroupSize
-dds <- ddsHTSeq[keep,]
+keep <- rowSums(counts(ddsTxi) >= as.numeric(opt$count)) >= smallestGroupSize
+dds <- ddsTxi[keep,]
 dds$condition <- relevel(dds$condition, ref = "CONTROL")
 dds$group <- sampleTable$group
 
@@ -115,11 +114,11 @@ par(mfrow=c(1,2)) # plots two plots
 boxplot(log2(counts(dds)[rs > 0,] + 1), cex.lab = 2, cex.axis = 2,xaxt = "n", col=statusCol)# not normalized
 tick <- seq_along(as.character(dds$group))
 axis(1, at = tick, labels = F)
-text(tick, par("usr")[3] - 2.5, as.character(dds$group), srt = 90, xpd = T, offset =5)
+text(tick, par("usr")[3] - 1, as.character(dds$group), srt = 90, xpd = T, offset =1)
 boxplot(log2(counts(dds, normalized=TRUE)[rs > 0,] + 1), cex.lab = 2, cex.axis = 2,xaxt = "n", col=statusCol)# not normalized
 tick <- seq_along(as.character(dds$group))
 axis(1, at = tick, labels = F)
-text(tick, par("usr")[3] - 2.5, as.character(dds$group), srt = 90, xpd = T, offset =5)
+text(tick, par("usr")[3] - 1, as.character(dds$group), srt = 90, xpd = T, offset =1)
 dev.off()
 
 # Transform the raw count data
@@ -292,7 +291,7 @@ dev.off()
 
 ## Differential Expression Analysis 
 design(dds) <- ~ condition
-dds <- DESeq(dds)
+dds <- DESeq(dds,fitType='local')
 
 res <- results(dds, contrast = c("condition", "TUMOR","CONTROL"), alpha = as.numeric(opt$alpha))
 
@@ -359,16 +358,30 @@ ResAnnotation <- function (restable){
 
 res <- ResAnnotation(res)
 
-pdf(file.path(opt$output,"VolcanoPlot.results.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
-EnhancedVolcano(res,
-								lab = res$symbol,
-								x = 'log2FoldChange',
-								y = 'padj',
-								FCcutoff = 1.5,
-								pCutoff = 0.05,
-								title = "Volcano Plot")
-dev.off()
+#Volcano
+keyvals.colour=rep("gray", nrow(res))
+names(keyvals.colour)=rep("Not Significant", nrow(res))
+keyvals.colour[which(res$log2FoldChange > 0.5)] = "red3"
+names(keyvals.colour)[which(res$log2FoldChange > 0.5)] = "UP"
+keyvals.colour[which(res$log2FoldChange< -0.5)] = "dodgerblue2"
+names(keyvals.colour)[which(res$log2FoldChange< -0.5)] = "DOWN"
+keyvals.colour[which(res$pvalue>0.1)] = "gray"
+names(keyvals.colour)[which(res$pvalue>0.1)] = "Not Significant"
 
+pdf(file.path(opt$output,"VolcanoPlot.results.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
+EnhancedVolcano(res, 
+								lab=res$symbol, 
+								labFace="bold", 
+								x="log2FoldChange", 
+								y="pvalue", 
+								xlim=c(-6, 6), 
+								title="DEGs", 
+								pCutoff=0.1, 
+								FCcutoff=0.5, 
+								colCustom= keyvals.colour, 
+								colAlpha=1)
+
+dev.off()
 
 
 ## lfcShrink function to shrink the log2 fold changes for the comparison of dex Tumor vs Control samples
@@ -377,8 +390,8 @@ resNorm <- lfcShrink(dds, coef="condition_TUMOR_vs_CONTROL", type="normal", res 
 resAsh <- lfcShrink(dds, coef="condition_TUMOR_vs_CONTROL", type="ashr", res = res)
 
 #Independent hypothesis weighting
-resIHW <- results(dds, filterFun=ihw, alpha = 0.05)
-metadata(resIHW)$ihwResult
+#resIHW <- results(dds, filterFun=ihw, alpha = 0.05)
+#metadata(resIHW)$ihwResult
 
 ## Export MA plot
 pdf(file.path(opt$output,"multipleMAplot.pdf"),height = as.numeric(opt$Height), width = as.numeric(opt$width))
@@ -387,49 +400,95 @@ xlim <- c(1,1e5); ylim <- c(-10,10)
 plotMA(resLFC, xlim=xlim, ylim=ylim, main="apeglm")
 plotMA(resNorm, xlim=xlim, ylim=ylim, main="normal")
 plotMA(resAsh, xlim=xlim, ylim=ylim, main="ashr")
-plotMA(resIHW, xlim=xlim, ylim=ylim, main="Independent Hypotesis Weighting")
+#plotMA(resIHW, xlim=xlim, ylim=ylim, main="Independent Hypotesis Weighting")
 dev.off()
 
 #resApeglm
 resApeglm <- ResAnnotation(resLFC)
 
+#Volcano
+keyvals.colour=rep("gray", nrow(resApeglm))
+names(keyvals.colour)=rep("Not Significant", nrow(resApeglm))
+keyvals.colour[which(resApeglm$log2FoldChange > 0.5)] = "red3"
+names(keyvals.colour)[which(resApeglm$log2FoldChange > 0.5)] = "UP"
+keyvals.colour[which(resApeglm$log2FoldChange< -0.5)] = "dodgerblue2"
+names(keyvals.colour)[which(resApeglm$log2FoldChange< -0.5)] = "DOWN"
+keyvals.colour[which(resApeglm$pvalue>0.1)] = "gray"
+names(keyvals.colour)[which(resApeglm$pvalue>0.1)] = "Not Significant"
+
 pdf(file.path(opt$output,"VolcanoPlot.apeglm.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
-EnhancedVolcano(resApeglm,
-								lab = resApeglm$symbol,
-								x = 'log2FoldChange',
-								y = 'padj',
-								FCcutoff = 1.5,
-								pCutoff = 0.05,
-								title = "Volcano Plot")
+EnhancedVolcano(resApeglm, 
+								lab=resApeglm$symbol, 
+								labFace="bold", 
+								x="log2FoldChange", 
+								y="pvalue", 
+								xlim=c(-6, 6), 
+								title="DEGs", 
+								pCutoff=0.1, 
+								FCcutoff=0.5, 
+								colCustom= keyvals.colour, 
+								colAlpha=1)
+
 dev.off()
 
 
 #resNorm
 resNorm <- ResAnnotation(resNorm)
 
+#Volcano
+keyvals.colour=rep("gray", nrow(resNorm))
+names(keyvals.colour)=rep("Not Significant", nrow(resNorm))
+keyvals.colour[which(resNorm$log2FoldChange > 0.5)] = "red3"
+names(keyvals.colour)[which(resNorm$log2FoldChange > 0.5)] = "UP"
+keyvals.colour[which(resNorm$log2FoldChange< -0.5)] = "dodgerblue2"
+names(keyvals.colour)[which(resNorm$log2FoldChange< -0.5)] = "DOWN"
+keyvals.colour[which(resNorm$pvalue>0.1)] = "gray"
+names(keyvals.colour)[which(resNorm$pvalue>0.1)] = "Not Significant"
+
 pdf(file.path(opt$output,"VolcanoPlot.Normal.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
-EnhancedVolcano(resNorm,
-								lab = resNorm$symbol,
-								x = 'log2FoldChange',
-								y = 'padj',
-								FCcutoff = 1.5,
-								pCutoff = 0.05,
-								title = "Volcano Plot")
+EnhancedVolcano(resNorm, 
+								lab=resNorm$symbol, 
+								labFace="bold", 
+								x="log2FoldChange", 
+								y="pvalue", 
+								xlim=c(-6, 6), 
+								title="DEGs", 
+								pCutoff=0.1, 
+								FCcutoff=0.5, 
+								colCustom= keyvals.colour, 
+								colAlpha=1)
+
 dev.off()
 
 
 #resAsh
 resAsh <- ResAnnotation(resAsh)
 
-pdf(file.path(opt$output,"VolcanoPlot.Normal.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
-EnhancedVolcano(resAsh,
-								lab = resAsh$symbol,
-								x = 'log2FoldChange',
-								y = 'padj',
-								FCcutoff = 1.5,
-								pCutoff = 0.05,
-								title = "Volcano Plot")
+#Volcano
+keyvals.colour=rep("gray", nrow(resAsh))
+names(keyvals.colour)=rep("Not Significant", nrow(resAsh))
+keyvals.colour[which(resAsh$log2FoldChange > 0.5)] = "red3"
+names(keyvals.colour)[which(resAsh$log2FoldChange > 0.5)] = "UP"
+keyvals.colour[which(resAsh$log2FoldChange< -0.5)] = "dodgerblue2"
+names(keyvals.colour)[which(resAsh$log2FoldChange< -0.5)] = "DOWN"
+keyvals.colour[which(resAsh$pvalue>0.1)] = "gray"
+names(keyvals.colour)[which(resAsh$pvalue>0.1)] = "Not Significant"
+
+pdf(file.path(opt$output,"VolcanoPlot.Ash.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
+EnhancedVolcano(resAsh, 
+								lab=resAsh$symbol, 
+								labFace="bold", 
+								x="log2FoldChange", 
+								y="pvalue", 
+								xlim=c(-6, 6), 
+								title="DEGs", 
+								pCutoff=0.1, 
+								FCcutoff=0.5, 
+								colCustom= keyvals.colour, 
+								colAlpha=1)
+
 dev.off()
+
 
 
 ## two option for colorPalette
