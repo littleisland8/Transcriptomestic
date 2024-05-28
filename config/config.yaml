@@ -64,10 +64,10 @@ DESeqFromFeatureCounts:
    count: 10
    alpha: 0.05
    height: 12
-   width: 10
+   width: 15
 
 DESeqFromSalmon:
    count: 10
    alpha: 0.05
    height: 12
-   width: 10
+   width: 15
