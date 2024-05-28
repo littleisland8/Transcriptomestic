@@ -47,4 +47,5 @@ rule Hisat2_featureCounts:
 rule Salmon:
 	input:
 		directory("resources/salmon_idx"),
-		#expand(f"count/{{sample}}_salmon/quant.sf", sample=config["samples"].values())
+		expand(f"count/{{sample}}_salmon/quant.sf", sample=config["samples"].values()),
+		directory("results/Salmon")

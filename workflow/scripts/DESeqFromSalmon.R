@@ -57,6 +57,7 @@ if (dir.exists(opt$output)){
 
 }
 
+
 ## List all directories containing data  
 samples <- list.files(path = file.path(getwd(),"count/"), pattern="_salmon", full.names = T)
 
@@ -64,15 +65,13 @@ samples <- list.files(path = file.path(getwd(),"count/"), pattern="_salmon", ful
 files <- file.path(samples, "quant.sf")
 
 ## Since all quant files have the same name it is useful to have names for each element
-names(files) <- list.files(path = file.path(getwd(),"count/"), pattern="_salmon", full.names = F)
+names(files) <- unlist(strsplit(list.files(path = file.path(getwd(),"count/"), pattern="_salmon", full.names = F), "_salmon"))
 
 ### Load the annotation table for GrCh38
 tx2gene <- read.delim(file.path(getwd(),"resources/tx2gene_grch38_ens94.txt"))
 
 # Run tximport
 txi <- tximport(files, type="salmon",txOut=TRUE, countsFromAbundance="lengthScaledTPM", ignoreTxVersion = TRUE, tx2gene=tx2gene)
-attributes(txi)
-str(txi)
 
 #preprocessing
 sampleTable <- read.table(opt$sampletable, sep="\t", header=TRUE)
@@ -81,48 +80,17 @@ sampleTable$condition <- factor(sampleTable$condition)
 sampleTable$group <- factor(sampleTable$group) 
 
 ## Load data count
-sampletype <- factor(c("TN","TN","TN","TN","TN","CB","CB","CB"))
-meta <- data.frame(sampletype, samplename= colnames(txi$counts),row.names = colnames(txi$counts))
-ddsTxi <-  DESeqDataSetFromTximport(txi, colData = meta, design = ~ sampletype)
+#sampletype <- factor(c("TN","TN","TN","TN","TN","CB","CB","CB"))
+meta <- data.frame(condition=sampleTable$condition, samplename= colnames(txi$counts),row.names = colnames(txi$counts))
+ddsTxi <-  DESeqDataSetFromTximport(txi, colData = meta, design = ~ condition)
 ddsTxi <- estimateSizeFactors(ddsTxi)
-ddsTxi$sizeFactor
-
-
-#Define path and list of featureCounts read counts files.
-indir <- file.path(getwd(),"count/htseq/STAR")
-
-files_counts <- list.files(indir,"*.count$", full.names = T)
-
-#Load first file geneid and read count
-countData <- data.frame(fread(files_counts[1]))
-
-# Loop and read the 7th column remaining files.
-for(i in 2:length(files_counts)) {
-  countData = cbind(countData, data.frame(fread(files_counts[i]))[2])
-}
-
-#preprocessing
-sampleTable <- read.table(opt$sampletable, sep="\t", header=TRUE)
-sampleTable$sampleName <- factor(sampleTable$sampleName)
-sampleTable$condition <- factor(sampleTable$condition)
-sampleTable$group <- factor(sampleTable$group) 
-
-#load 
-ddsHTSeq <- DESeqDataSetFromHTSeqCount(sampleTable = sampleTable, directory = indir, design = ~ condition)
-ddsHTSeq <- estimateSizeFactors(ddsHTSeq)
-
-#Rename columns
-names <- sampleTable$sampleName
-colnames(countData) <- c("GeneID", names)
-rownames(countData) <- countData$GeneID
-countData <- countData[,c(2:ncol(countData))]
 
 # export table countdata
-write.table(countData, file.path(opt$output,"countdata_featurecounts.txt"), quote = FALSE, sep = "\t", row.names = TRUE)
+write.table(as.data.frame(txi$counts), file.path(opt$output,"countdata_salmon.txt"), quote = FALSE, sep = "\t", row.names = TRUE)
 
 #Countdata generation
 #Convert to matrix
-countdata <- countData
+countdata <- as.data.frame(txi$counts)
 countdata <- as.matrix(countdata)
 
 #Assign condition
