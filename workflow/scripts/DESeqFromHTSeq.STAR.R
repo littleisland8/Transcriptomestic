@@ -81,7 +81,7 @@ ddsHTSeq <- estimateSizeFactors(ddsHTSeq)
 
 #Rename columns
 names <- sampleTable$sampleName
-colnames(countData) <- c("GeneID", names)
+colnames(countData) <- c("GeneID", as.character(names))
 rownames(countData) <- countData$GeneID
 countData <- countData[,c(2:ncol(countData))]
 
