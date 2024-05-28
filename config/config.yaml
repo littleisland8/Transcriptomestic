@@ -50,7 +50,9 @@ libType: ISR #ISF or IU
 
 #awk 'NR%4 == 2 {lengths[length($0)]++} END {for (l in lengths) {print l, lengths[l]}}' 1178.R1.sub.fastq
 
-#DESeq from HTSeq count parameters
+############################
+# DESeq2 parameters parameters #
+############################
 
 DESeqFromHTSeqCount:
    count: 10
@@ -59,6 +61,12 @@ DESeqFromHTSeqCount:
    width: 15
 
 DESeqFromFeatureCounts:
+   count: 10
+   alpha: 0.05
+   height: 10
+   width: 10
+
+DESeqFromSalmon:
    count: 10
    alpha: 0.05
    height: 10
