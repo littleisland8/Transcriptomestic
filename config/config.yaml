@@ -57,17 +57,17 @@ libType: ISR #ISF or IU
 DESeqFromHTSeqCount:
    count: 10
    alpha: 0.05
-   height: 20
+   height: 12
    width: 15
 
 DESeqFromFeatureCounts:
    count: 10
    alpha: 0.05
-   height: 20
+   height: 12
    width: 10
 
 DESeqFromSalmon:
    count: 10
    alpha: 0.05
-   height: 20
+   height: 12
    width: 10
