@@ -16,8 +16,8 @@ rule SalmonIndex:
 rule SalmonQuant:
 	input:
 		idx=directory("resources/salmon_idx"),
-		R1="data/{sample}.R1.tr.fastq.gz",
-		R2="data/{sample}.R2.tr.fastq.gz"
+		R1="data/{sample}_1.tr.fq.gz",
+		R2="data/{sample}_2.tr.fq.gz"
 	output:
 		"count/{sample}_salmon/quant.sf"
 	threads: 1

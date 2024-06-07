@@ -11,7 +11,7 @@ suppressPackageStartupMessages(library(EnhancedVolcano))
 suppressPackageStartupMessages(library(apeglm))
 suppressPackageStartupMessages(library("IHW"))
 suppressPackageStartupMessages(library(hexbin))
-suppressPackageStartupMessages(library(xlsx))
+#suppressPackageStartupMessages(library(xlsx))
 suppressPackageStartupMessages(library(ashr))
 suppressPackageStartupMessages(library(apeglm))
 suppressPackageStartupMessages(library(ggrepel))
@@ -97,7 +97,7 @@ dds_featurecounts <- DESeqDataSetFromMatrix(countData=countdata, colData=coldata
 dds_featurecounts <- estimateSizeFactors(dds_featurecounts)
 
 ## Filter low counts gene, filter out genes (row) with no count
-smallestGroupSize <- min(c(length(which(sampleTable$condition == "TUMOR")),length(which(sampleTable$condition == "CONTROL"))))
+smallestGroupSize <- min(c(length(which(sampleTable$condition == "LACTATE")),length(which(sampleTable$condition == "CONTROL"))))
 keep <- rowSums(counts(dds_featurecounts) >= as.numeric(opt$count)) >= smallestGroupSize
 dds <- dds_featurecounts[keep,]
 dds$condition <- relevel(dds$condition, ref = "CONTROL")
@@ -165,7 +165,7 @@ cols <- colorRampPalette(brewer.pal(9, "Set1"))
 mycolors <- cols(length(unique(annotation$pts)))
 names(mycolors) <- unique(annotation$pts)
 annotation_colors = list(
-	Phase = c(TUMOR="red", CONTROL="green"))
+	Phase = c(LACTATE="red", CONTROL="green"))
 
 colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
 
@@ -291,7 +291,7 @@ dev.off()
 design(dds) <- ~ condition
 dds <- DESeq(dds)
 
-res <- results(dds, contrast = c("condition", "TUMOR","CONTROL"), alpha = as.numeric(opt$alpha))
+res <- results(dds, contrast = c("condition", "LACTATE","CONTROL"), alpha = as.numeric(opt$alpha))
 
 ## export MA
 pdf(file.path(opt$output,"MA_plot.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
@@ -382,10 +382,10 @@ EnhancedVolcano(res,
 dev.off()
 
 
-## lfcShrink function to shrink the log2 fold changes for the comparison of dex Tumor vs Control samples
-resLFC <- lfcShrink(dds, coef="condition_TUMOR_vs_CONTROL", type="apeglm", res = res)
-resNorm <- lfcShrink(dds, coef="condition_TUMOR_vs_CONTROL", type="normal", res = res)
-resAsh <- lfcShrink(dds, coef="condition_TUMOR_vs_CONTROL", type="ashr", res = res)
+## lfcShrink function to shrink the log2 fold changes for the comparison of dex LACTATE vs Control samples
+resLFC <- lfcShrink(dds, coef="condition_LACTATE_vs_CONTROL", type="apeglm", res = res)
+resNorm <- lfcShrink(dds, coef="condition_LACTATE_vs_CONTROL", type="normal", res = res)
+resAsh <- lfcShrink(dds, coef="condition_LACTATE_vs_CONTROL", type="ashr", res = res)
 
 #Independent hypothesis weighting
 #resIHW <- results(dds, filterFun=ihw, alpha = 0.05)
@@ -505,7 +505,7 @@ dev.off()
 df_20 <- as.data.frame(res[which(rownames(res) %in% rownames(mat20)),])
 write.table(df_20, file.path(opt$output,"top20deg.vst.txt"), sep = "\t", row.names = TRUE, quote = FALSE)
 write.csv(df_20, file.path(opt$output,"top20deg.vst.csv"), row.names = TRUE, quote = FALSE)
-write.xlsx(df_20, file.path(opt$output,"top20deg.vst.xlsx"), row.names = TRUE)
+#write.xlsx(df_20, file.path(opt$output,"top20deg.vst.xlsx"), row.names = TRUE)
 
 ## Gene clustering top 50 genes vst
 topVarGenes50 <- head(order(rowVars(assay(vst)), decreasing = TRUE), 50)
@@ -514,7 +514,7 @@ mat50  <- assay(vst)[ topVarGenes50, ]
 df_50 <- as.data.frame(res[which(rownames(res) %in% rownames(mat50)),])
 write.table(df_50, file.path(opt$output,"top50deg.vst.txt"), sep = "\t", row.names = TRUE, quote = FALSE)
 write.csv(df_50, file.path(opt$output,"top50deg.vst.csv"), row.names = TRUE, quote = FALSE)
-write.xlsx(df_50, file.path(opt$output,"top50deg.vst.xlsx"), row.names = TRUE)
+#write.xlsx(df_50, file.path(opt$output,"top50deg.vst.xlsx"), row.names = TRUE)
 
 #export
 pdf(file.path(opt$output,"heatmap_top50.vst.pdf"),height = as.numeric(opt$Height), width = as.numeric(opt$width))
@@ -528,7 +528,7 @@ mat100  <- assay(vst)[ topVarGenes100, ]
 df_100 <- as.data.frame(res[which(rownames(res) %in% rownames(mat100)),])
 write.table(df_100, file.path(opt$output,"top100deg.vst.txt"), sep = "\t", row.names = TRUE, quote = FALSE)
 write.csv(df_100, file.path(opt$output,"top100deg.vst.csv"), row.names = TRUE, quote = FALSE)
-write.xlsx(df_100, file.path(opt$output,"top100deg.vst.xlsx"), row.names = TRUE)
+#write.xlsx(df_100, file.path(opt$output,"top100deg.vst.xlsx"), row.names = TRUE)
 
 #export
 pdf(file.path(opt$output,"heatmap_top100.vst.pdf"),,height = as.numeric(opt$Height), width = as.numeric(opt$width))
@@ -542,7 +542,7 @@ mat1000  <- assay(vst)[ topVarGenes1000, ]
 df_1000 <- as.data.frame(res[which(rownames(res) %in% rownames(mat1000)),])
 write.table(df_1000, file.path(opt$output,"top1000deg.vst.txt"), sep = "\t", row.names = TRUE, quote = FALSE)
 write.csv(df_1000, file.path(opt$output,"top1000deg.vst.csv"), row.names = TRUE, quote = FALSE)
-write.xlsx(df_1000, file.path(opt$output,"top1000deg.vst.xlsx"), row.names = TRUE)
+#write.xlsx(df_1000, file.path(opt$output,"top1000deg.vst.xlsx"), row.names = TRUE)
 
 #export
 pdf(file.path(opt$output,"heatmap_top1000.vst.pdf"), ,height = as.numeric(opt$Height), width = as.numeric(opt$width))
@@ -561,7 +561,7 @@ dev.off()
 df_20 <- as.data.frame(res[which(rownames(res) %in% rownames(mat20)),])
 write.table(df_20, file.path(opt$output,"top20deg.rlog.txt"), sep = "\t", row.names = TRUE, quote = FALSE)
 write.csv(df_20, file.path(opt$output,"top20deg.rlog.csv"), row.names = TRUE, quote = FALSE)
-write.xlsx(df_20, file.path(opt$output,"top20deg.rlog.xlsx"), row.names = TRUE)
+#write.xlsx(df_20, file.path(opt$output,"top20deg.rlog.xlsx"), row.names = TRUE)
 
 ## Gene clustering top 50 genes rlog
 topVarGenes50 <- head(order(rowVars(assay(rlog)), decreasing = TRUE), 50)
@@ -570,7 +570,7 @@ mat50  <- assay(rlog)[ topVarGenes50, ]
 df_50 <- as.data.frame(res[which(rownames(res) %in% rownames(mat50)),])
 write.table(df_50, file.path(opt$output,"top50deg.rlog.txt"), sep = "\t", row.names = TRUE, quote = FALSE)
 write.csv(df_50, file.path(opt$output,"top50deg.rlog.csv"), row.names = TRUE, quote = FALSE)
-write.xlsx(df_50, file.path(opt$output,"top50deg.rlog.xlsx"), row.names = TRUE)
+#write.xlsx(df_50, file.path(opt$output,"top50deg.rlog.xlsx"), row.names = TRUE)
 
 #export
 pdf(file.path(opt$output,"heatmap_top50.rlog.pdf"),height = as.numeric(opt$Height), width = as.numeric(opt$width))
@@ -584,7 +584,7 @@ mat100  <- assay(rlog)[ topVarGenes100, ]
 df_100 <- as.data.frame(res[which(rownames(res) %in% rownames(mat100)),])
 write.table(df_100, file.path(opt$output,"top100deg.rlog.txt"), sep = "\t", row.names = TRUE, quote = FALSE)
 write.csv(df_100, file.path(opt$output,"top100deg.rlog.csv"), row.names = TRUE, quote = FALSE)
-write.xlsx(df_100, file.path(opt$output,"top100deg.rlog.xlsx"), row.names = TRUE)
+#write.xlsx(df_100, file.path(opt$output,"top100deg.rlog.xlsx"), row.names = TRUE)
 
 #export
 pdf(file.path(opt$output,"heatmap_top100.rlog.pdf"),height = as.numeric(opt$Height), width = as.numeric(opt$width))
@@ -598,7 +598,7 @@ mat1000  <- assay(rlog)[ topVarGenes1000, ]
 df_1000 <- as.data.frame(res[which(rownames(rlog) %in% rownames(mat1000)),])
 write.table(df_1000, file.path(opt$output,"top1000deg.rlog.txt"), sep = "\t", row.names = TRUE, quote = FALSE)
 write.csv(df_1000, file.path(opt$output,"top1000deg.rlog.csv"), row.names = TRUE, quote = FALSE)
-write.xlsx(df_1000, file.path(opt$output,"top1000deg.rlog.xlsx"), row.names = TRUE)
+#write.xlsx(df_1000, file.path(opt$output,"top1000deg.rlog.xlsx"), row.names = TRUE)
 
 #export
 pdf(file.path(opt$output,"heatmap_top1000.rlog.pdf"),height = as.numeric(opt$Height), width = as.numeric(opt$width))
@@ -616,13 +616,13 @@ res_ <- res_ %>% relocate(FC, .before = log2FoldChange)
 res_ <- res_ %>% relocate(absFC, .before = log2FoldChange)
 
 write.table(res_, file.path(opt$output, "results.txt"), row.names = FALSE, quote = FALSE, sep = "\t")
-write.xlsx(res_, file.path(opt$output,"results.xlsx"),row.names=FALSE)
+#write.xlsx(res_, file.path(opt$output,"results.xlsx"),row.names=FALSE)
 write.csv(res_, file.path(opt$output,"results.csv"), row.names = FALSE, quote = FALSE)
 
 #Export the filtered results
 res_filter <- res_[(which(res_$pvalue <= 0.05 & abs(res_$log2FoldChange)>=0.58)),]
 write.table(res_filter, file.path(opt$output, "results.filtered.txt"), row.names = FALSE, quote = FALSE, sep = "\t")
-write.xlsx(res_filter, file.path(opt$output,"results.filtered.xlsx"),row.names=FALSE)
+#write.xlsx(res_filter, file.path(opt$output,"results.filtered.xlsx"),row.names=FALSE)
 write.csv(res_filter, file.path(opt$output,"results.filtered.csv"), row.names = FALSE, quote = FALSE)
 
 #Heatmap DEG res_
@@ -663,7 +663,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_ vst
 mypalette <- brewer.pal(11, "RdYlBu")
 morecols <- colorRampPalette(mypalette)
-ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
+ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
 topVarGenes_res <- res_filter$EnsemblID[1:100]
 rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
@@ -680,7 +680,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_ rlog
 #mypalette <- brewer.pal(11, "RdYlBu")
 #morecols <- colorRampPalette(mypalette)
-#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
+#ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
 #topVarGenes_res <- res_filter$EnsemblID[1:100]
 rownames(rlog) <- gsub("\\..*","",rownames(rlog))
 mat  <- assay(rlog)[ topVarGenes_res, ]
@@ -703,13 +703,13 @@ resApeglm_$absFC <- 2**abs(resApeglm_$log2FoldChange)
 resApeglm_ <- resApeglm_ %>% relocate(FC, .before = log2FoldChange)
 resApeglm_ <- resApeglm_ %>% relocate(absFC, .before = log2FoldChange)
 write.table(resApeglm_, file.path(opt$output, "results.apeglm.txt"), row.names = FALSE, quote = FALSE, sep = "\t")
-write.xlsx(resApeglm_, file.path(opt$output,"results.apeglm.xlsx"),row.names=FALSE)
+#write.xlsx(resApeglm_, file.path(opt$output,"results.apeglm.xlsx"),row.names=FALSE)
 write.csv(resApeglm_, file.path(opt$output,"results.apeglm.csv"), row.names = FALSE, quote = FALSE)
 
 #Export the filtered results apeglm
 resApeglm_filter <- resApeglm_[(which(resApeglm_$pvalue <= 0.05 & abs(resApeglm_$log2FoldChange)>=0.58)),]
 write.table(resApeglm_filter, file.path(opt$output, "results.filtered.apeglm.txt"), row.names = FALSE, quote = FALSE, sep = "\t")
-write.xlsx(resApeglm_filter, file.path(opt$output,"results.filtered.apeglm.xlsx"),row.names=FALSE)
+#write.xlsx(resApeglm_filter, file.path(opt$output,"results.filtered.apeglm.xlsx"),row.names=FALSE)
 write.csv(resApeglm_filter, file.path(opt$output,"results.filtered.apeglm.csv"), row.names = FALSE, quote = FALSE)
 
 #Heatmap DEG apeglm
@@ -750,7 +750,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_apeglm vst
 mypalette <- brewer.pal(11, "RdYlBu")
 morecols <- colorRampPalette(mypalette)
-ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
+ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
 topVarGenes_res <- resApeglm_filter$EnsemblID[1:100]
 rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
@@ -766,7 +766,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_apeglm rlog
 #mypalette <- brewer.pal(11, "RdYlBu")
 #morecols <- colorRampPalette(mypalette)
-#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
+#ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
 #topVarGenes_res <- resApeglm_filter$EnsemblID[1:100]
 rownames(rlog) <- gsub("\\..*","",rownames(rlog))
 mat  <- assay(rlog)[ topVarGenes_res, ]
@@ -789,13 +789,13 @@ resNorm_$absFC <- 2**abs(resNorm_$log2FoldChange)
 resNorm_ <- resNorm_ %>% relocate(FC, .before = log2FoldChange)
 resNorm_ <- resNorm_ %>% relocate(absFC, .before = log2FoldChange)
 write.table(resNorm_, file.path(opt$output, "results.norm.txt"), row.names = FALSE, quote = FALSE, sep = "\t")
-write.xlsx(resNorm_, file.path(opt$output,"results.norm.xlsx"),row.names=FALSE)
+#write.xlsx(resNorm_, file.path(opt$output,"results.norm.xlsx"),row.names=FALSE)
 write.csv(resNorm_, file.path(opt$output,"results.norm.csv"), row.names = FALSE, quote = FALSE)
 
 #Export the filtered results Norm
 resNorm_filter <- resNorm_[(which(resNorm_$pvalue <= 0.05 & abs(resNorm_$log2FoldChange)>=0.58)),]
 write.table(resNorm_filter, file.path(opt$output, "results.filtered.norm.txt"), row.names = FALSE, quote = FALSE, sep = "\t")
-write.xlsx(resNorm_filter, file.path(opt$output,"results.filtered.norm.xlsx"),row.names=FALSE)
+#write.xlsx(resNorm_filter, file.path(opt$output,"results.filtered.norm.xlsx"),row.names=FALSE)
 write.csv(resNorm_filter, file.path(opt$output,"results.filtered.norm.csv"), row.names = FALSE, quote = FALSE)
 
 #Heatmap DEG norm
@@ -836,7 +836,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_norm vst
 mypalette <- brewer.pal(11, "RdYlBu")
 morecols <- colorRampPalette(mypalette)
-ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
+ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
 topVarGenes_res <- resNorm_filter$EnsemblID[1:100]
 rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
@@ -852,7 +852,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_norm rlog
 #mypalette <- brewer.pal(11, "RdYlBu")
 #morecols <- colorRampPalette(mypalette)
-#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
+#ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
 #topVarGenes_res <- resNorm_filter$EnsemblID[1:100]
 rownames(rlog) <- gsub("\\..*","",rownames(rlog))
 mat  <- assay(rlog)[ topVarGenes_res, ]
@@ -875,13 +875,13 @@ resAsh_$absFC <- 2**abs(resAsh_$log2FoldChange)
 resAsh_ <- resAsh_ %>% relocate(FC, .before = log2FoldChange)
 resAsh_ <- resAsh_ %>% relocate(absFC, .before = log2FoldChange)
 write.table(resAsh_, file.path(opt$output, "results.ash.txt"), row.names = FALSE, quote = FALSE, sep = "\t")
-write.xlsx(resAsh_, file.path(opt$output,"results.ash.xlsx"),row.names=FALSE)
+#write.xlsx(resAsh_, file.path(opt$output,"results.ash.xlsx"),row.names=FALSE)
 write.csv(resAsh_, file.path(opt$output,"results.ash.csv"), row.names = FALSE, quote = FALSE)
 
 #Export the filtered results Ash
 resAsh_filter <- resAsh_[(which(resAsh_$pvalue <= 0.05 & abs(resAsh_$log2FoldChange)>=0.58)),]
 write.table(resAsh_filter, file.path(opt$output, "results.filtered.ash.txt"), row.names = FALSE, quote = FALSE, sep = "\t")
-write.xlsx(resAsh_filter, file.path(opt$output,"results.filtered.ash.xlsx"),row.names=FALSE)
+#write.xlsx(resAsh_filter, file.path(opt$output,"results.filtered.ash.xlsx"),row.names=FALSE)
 write.csv(resAsh_filter, file.path(opt$output,"results.filtered.ash.csv"), row.names = FALSE, quote = FALSE)
 
 #Heatmap DEG Ash
@@ -922,7 +922,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_ash vst
 mypalette <- brewer.pal(11, "RdYlBu")
 morecols <- colorRampPalette(mypalette)
-ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
+ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
 topVarGenes_res <- resAsh_filter$EnsemblID[1:100]
 rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
@@ -938,7 +938,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_ash rlog
 #mypalette <- brewer.pal(11, "RdYlBu")
 #morecols <- colorRampPalette(mypalette)
-#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
+#ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
 #topVarGenes_res <- resAsh_filter$EnsemblID[1:100]
 rownames(rlog) <- gsub("\\..*","",rownames(rlog))
 mat  <- assay(rlog)[ topVarGenes_res, ]

@@ -20,6 +20,7 @@ dependencies:
  - bioconductor-ihw
  - r-hexbin
  - r-xlsx
+ - r-rjava
  - r-ashr
  - bioconductor-apeglm
  - r-ggrepel

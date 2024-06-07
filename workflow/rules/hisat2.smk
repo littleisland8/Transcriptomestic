@@ -13,8 +13,8 @@ rule hisat2_index:
 
 rule hisat2Align:
     input:
-        R1="data/{sample}.R1.tr.fastq.gz", 
-        R2="data/{sample}.R2.tr.fastq.gz",
+        R1="data/{sample}_1.tr.fq.gz", 
+        R2="data/{sample}_2.tr.fq.gz",
         idx="resources" + "/" + config["genome"].split("resources/")[1].split(".fa")[0] + "_hisat2"
     output:
         "alignments/{sample}.hisat2.bam"

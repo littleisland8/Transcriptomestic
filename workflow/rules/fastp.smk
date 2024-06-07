@@ -1,8 +1,8 @@
 rule fastpTumor: ## aggiungere flag per i threads
 	input:
-		sample=["data/{sample}.R1.fastq.gz", "data/{sample}.R2.fastq.gz"]
+		sample=[config["datadir"] + "/" + "{sample}_1.fq.gz", config["datadir"] + "/" + "{sample}_2.fq.gz"]
 	output:
-		trimmed=["data/{sample}.R1.tr.fastq.gz", "data/{sample}.R2.tr.fastq.gz"],
+		trimmed=["data/{sample}_1.tr.fq.gz", "data/{sample}_2.tr.fq.gz"],
 		json="data/{sample}.json",
 		failed="data/{sample}.failedreads.txt",
 		html="data/{sample}.html",
