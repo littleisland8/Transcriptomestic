@@ -221,6 +221,27 @@ pca_rlog <- ggplot(rlog_pca, aes(x = PC1, y = PC2, color = condition)) +
 
 ggsave(pca_rlog, filename = file.path(opt$output,"2DPCA.rlog.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
 
+## topVar 1000 genes
+topVarGenes1000 <- head(order(rowVars(assay(rlog)), decreasing = TRUE), 1000)
+rlog1000  <- rlog[ topVarGenes1000, ]
+
+## PCA
+rlog_pca <- plotPCA(rlog1000, intgroup = c("condition"), returnData = TRUE)
+percentVar <- round(100 * attr(rlog_pca, "percentVar"))
+pca_rlog <- ggplot(rlog_pca, aes(x = PC1, y = PC2, color = condition)) +
+	geom_point(size =2) +
+	xlab(paste0("PC1: ", percentVar[1], "% variance")) +
+	ylab(paste0("PC2: ", percentVar[2], "% variance")) +
+	coord_fixed() +
+	ggtitle("PCA") + 	
+	geom_label_repel(aes(label = name),
+									 box.padding   = 0.25, 
+									 point.padding = 0.35,
+									 segment.color = 'grey50',
+									 max.overlaps = 60) 
+
+ggsave(pca_rlog, filename = file.path(opt$output,"2DPCA.rlog.top1k.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
+
 ## PCA PCAplot
 ## Generate p
 rlog.output <- assay(rlog)
@@ -265,6 +286,27 @@ pca_vst <- ggplot(vst_pca, aes(x = PC1, y = PC2,color = condition)) +
 									 segment.color = 'grey50',
 									 max.overlaps = 60) 
 ggsave(pca_vst, filename = file.path(opt$output,"2DPCA.vst.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
+
+## topVar 1000 genes
+topVarGenes1000 <- head(order(rowVars(assay(vst)), decreasing = TRUE), 1000)
+vst1000  <- vst[ topVarGenes1000, ]
+
+## PCA
+vst_pca <- plotPCA(vst1000, intgroup = c("condition"), returnData = TRUE)
+percentVar <- round(100 * attr(vst_pca, "percentVar"))
+pca_vst <- ggplot(vst_pca, aes(x = PC1, y = PC2, color = condition)) +
+	geom_point(size =2) +
+	xlab(paste0("PC1: ", percentVar[1], "% variance")) +
+	ylab(paste0("PC2: ", percentVar[2], "% variance")) +
+	coord_fixed() +
+	ggtitle("PCA") + 	
+	geom_label_repel(aes(label = name),
+									 box.padding   = 0.25, 
+									 point.padding = 0.35,
+									 segment.color = 'grey50',
+									 max.overlaps = 60) 
+
+ggsave(pca_vst, filename = file.path(opt$output,"2DPCA.vst.top1k.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
 
 ## PCA PCAplot
 ## Generate p
