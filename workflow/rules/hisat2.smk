@@ -26,7 +26,7 @@ rule hisat2Align:
     params:
         strandness=config["rna_strandness"]
     shell:
-        "hisat2 -p {threads} -x {input.idx} --rna-strandness {params.strandness} -1 {input.R1} -2 {input.R2} | samtools view -Sbh -o {output} 2>{log}"
+        "hisat2 -p {threads} -x {input.idx} -1 {input.R1} -2 {input.R2} | samtools view -Sbh -o {output} 2>{log}"
 
 rule SamtoolsSortHisat2:
     input:
@@ -35,11 +35,11 @@ rule SamtoolsSortHisat2:
         "alignments/{sample}.hisat2.srt.bam"
     log:
         "logs/{sample}.SamtoolsSortHisat2.log",
-    params:
-        extra="-m 4G",
+    conda:
+        "../envs/hisat2.yaml"
     threads: 5
-    wrapper:
-        "v3.8.0/bio/samtools/sort"
+    shell:
+        "samtools sort -@ {threads} -o {output} {input}"
 
 rule SamtoolsIndexHisat2:
     input:

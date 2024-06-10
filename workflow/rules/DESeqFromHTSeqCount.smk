@@ -10,7 +10,7 @@ rule DESeqFromHTSeqCountSTAR:
 	message:
 		"DESeq2 analysis of STAR HTSeq count pipeline"
 	log:
-		"logs/DESeqFromHTSeq.log"
+		"logs/DESeqFromHTSeq.STAR.log"
 	params:
 		script="workflow/scripts/DESeqFromHTSeq.STAR.R",
 		counts=config["DESeqFromHTSeqCount"]["count"],
@@ -32,7 +32,7 @@ rule DESeqFromHTSeqCountHisat2:
 	message:
 		"DESeq2 analysis of Hisat2 HTSeq count pipeline"
 	log:
-		"logs/DESeqFromHTSeq.log"
+		"logs/DESeqFromHTSeq.Hisat2.log"
 	params:
 		script="workflow/scripts/DESeqFromHTSeq.hisat2.R",
 		counts=config["DESeqFromHTSeqCount"]["count"],

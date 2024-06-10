@@ -375,11 +375,13 @@ ResAnnotation <- function (restable){
 	restable$entrez <- mapIds(org.Hs.eg.db,
 													keys=ens.str,
 													column="ENTREZID",
-													keytype="ENSEMBL")
+													keytype="ENSEMBL",
+													multiVals = "first")
 	restable$alias <- mapIds(org.Hs.eg.db,
 												 keys=ens.str,
 												 column="ALIAS",
-												 keytype="ENSEMBL")
+												 keytype="ENSEMBL",
+													multiVals = "first")
 	restable$EnsemblID <- ens.str
 	
 	#Annotation with biomatr
@@ -404,12 +406,12 @@ res <- ResAnnotation(res)
 #Volcano
 keyvals.colour=rep("gray", nrow(res))
 names(keyvals.colour)=rep("Not Significant", nrow(res))
-keyvals.colour[which(res$log2FoldChange > 0.5)] = "red3"
-names(keyvals.colour)[which(res$log2FoldChange > 0.5)] = "UP"
-keyvals.colour[which(res$log2FoldChange< -0.5)] = "dodgerblue2"
-names(keyvals.colour)[which(res$log2FoldChange< -0.5)] = "DOWN"
-keyvals.colour[which(res$pvalue>0.1)] = "gray"
-names(keyvals.colour)[which(res$pvalue>0.1)] = "Not Significant"
+keyvals.colour[which(res$log2FoldChange >= 1.5)] = "red3"
+names(keyvals.colour)[which(res$log2FoldChange >= 1.5)] = "UP"
+keyvals.colour[which(res$log2FoldChange< -1.5)] = "dodgerblue2"
+names(keyvals.colour)[which(res$log2FoldChange <= -1.5)] = "DOWN"
+keyvals.colour[which(res$padj>=0.05)] = "gray"
+names(keyvals.colour)[which(res$padj>=0.05)] = "Not Significant"
 
 pdf(file.path(opt$output,"VolcanoPlot.results.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 EnhancedVolcano(res, 
@@ -418,10 +420,11 @@ EnhancedVolcano(res,
 								x="log2FoldChange", 
 								y="pvalue", 
 								xlim=c(-6, 6), 
-								title="DEGs", 
-								pCutoff=0.1, 
-								FCcutoff=0.5, 
-								colCustom= keyvals.colour, 
+								title="DEGs",
+								pCutoffCol="pvalue", 
+								pCutoff=0.05, 
+								FCcutoff=0.58, 
+								#colCustom= keyvals.colour, 
 								colAlpha=1)
 
 dev.off()
@@ -446,14 +449,17 @@ plotMA(resAsh, xlim=xlim, ylim=ylim, main="ashr")
 dev.off()
 
 #Volcano
-keyvals.colour=rep("gray", nrow(resApeglm))
-names(keyvals.colour)=rep("Not Significant", nrow(resApeglm))
-keyvals.colour[which(resApeglm$log2FoldChange > 0.5)] = "red3"
-names(keyvals.colour)[which(resApeglm$log2FoldChange > 0.5)] = "UP"
-keyvals.colour[which(resApeglm$log2FoldChange< -0.5)] = "dodgerblue2"
-names(keyvals.colour)[which(resApeglm$log2FoldChange< -0.5)] = "DOWN"
-keyvals.colour[which(resApeglm$pvalue>0.1)] = "gray"
-names(keyvals.colour)[which(resApeglm$pvalue>0.1)] = "Not Significant"
+keyvals.colour=rep("gray", nrow(res))
+names(keyvals.colour)=rep("Not Significant", nrow(res))
+keyvals.colour[which(res$log2FoldChange >= 1.5)] = "red3"
+names(keyvals.colour)[which(res$log2FoldChange >= 1.5)] = "UP"
+keyvals.colour[which(res$log2FoldChange< -1.5)] = "dodgerblue2"
+names(keyvals.colour)[which(res$log2FoldChange <= -1.5)] = "DOWN"
+keyvals.colour[which(res$padj>=0.05)] = "gray"
+names(keyvals.colour)[which(res$padj>=0.05)] = "Not Significant"
+
+#resApeglm
+resApeglm <- ResAnnotation(resLFC)
 
 pdf(file.path(opt$output,"VolcanoPlot.apeglm.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 EnhancedVolcano(resApeglm, 
@@ -462,10 +468,11 @@ EnhancedVolcano(resApeglm,
 								x="log2FoldChange", 
 								y="pvalue", 
 								xlim=c(-6, 6), 
-								title="DEGs", 
-								pCutoff=0.1, 
-								FCcutoff=0.5, 
-								colCustom= keyvals.colour, 
+								title="DEGs",
+								pCutoffCol="pvalue", 
+								pCutoff=0.05, 
+								FCcutoff=0.58, 
+								#colCustom= keyvals.colour, 
 								colAlpha=1)
 
 dev.off()
@@ -475,14 +482,14 @@ dev.off()
 resNorm <- ResAnnotation(resNorm)
 
 #Volcano
-keyvals.colour=rep("gray", nrow(resNorm))
-names(keyvals.colour)=rep("Not Significant", nrow(resNorm))
-keyvals.colour[which(resNorm$log2FoldChange > 0.5)] = "red3"
-names(keyvals.colour)[which(resNorm$log2FoldChange > 0.5)] = "UP"
-keyvals.colour[which(resNorm$log2FoldChange< -0.5)] = "dodgerblue2"
-names(keyvals.colour)[which(resNorm$log2FoldChange< -0.5)] = "DOWN"
-keyvals.colour[which(resNorm$pvalue>0.1)] = "gray"
-names(keyvals.colour)[which(resNorm$pvalue>0.1)] = "Not Significant"
+keyvals.colour=rep("gray", nrow(res))
+names(keyvals.colour)=rep("Not Significant", nrow(res))
+keyvals.colour[which(res$log2FoldChange >= 1.5)] = "red3"
+names(keyvals.colour)[which(res$log2FoldChange >= 1.5)] = "UP"
+keyvals.colour[which(res$log2FoldChange< -1.5)] = "dodgerblue2"
+names(keyvals.colour)[which(res$log2FoldChange <= -1.5)] = "DOWN"
+keyvals.colour[which(res$padj>=0.05)] = "gray"
+names(keyvals.colour)[which(res$padj>=0.05)] = "Not Significant"
 
 pdf(file.path(opt$output,"VolcanoPlot.Normal.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 EnhancedVolcano(resNorm, 
@@ -491,10 +498,11 @@ EnhancedVolcano(resNorm,
 								x="log2FoldChange", 
 								y="pvalue", 
 								xlim=c(-6, 6), 
-								title="DEGs", 
-								pCutoff=0.1, 
-								FCcutoff=0.5, 
-								colCustom= keyvals.colour, 
+								title="DEGs",
+								pCutoffCol="pvalue", 
+								pCutoff=0.05, 
+								FCcutoff=0.58, 
+								#colCustom= keyvals.colour, 
 								colAlpha=1)
 
 dev.off()
@@ -504,14 +512,14 @@ dev.off()
 resAsh <- ResAnnotation(resAsh)
 
 #Volcano
-keyvals.colour=rep("gray", nrow(resAsh))
-names(keyvals.colour)=rep("Not Significant", nrow(resAsh))
-keyvals.colour[which(resAsh$log2FoldChange > 0.5)] = "red3"
-names(keyvals.colour)[which(resAsh$log2FoldChange > 0.5)] = "UP"
-keyvals.colour[which(resAsh$log2FoldChange< -0.5)] = "dodgerblue2"
-names(keyvals.colour)[which(resAsh$log2FoldChange< -0.5)] = "DOWN"
-keyvals.colour[which(resAsh$pvalue>0.1)] = "gray"
-names(keyvals.colour)[which(resAsh$pvalue>0.1)] = "Not Significant"
+keyvals.colour=rep("gray", nrow(res))
+names(keyvals.colour)=rep("Not Significant", nrow(res))
+keyvals.colour[which(res$log2FoldChange >= 1.5)] = "red3"
+names(keyvals.colour)[which(res$log2FoldChange >= 1.5)] = "UP"
+keyvals.colour[which(res$log2FoldChange< -1.5)] = "dodgerblue2"
+names(keyvals.colour)[which(res$log2FoldChange <= -1.5)] = "DOWN"
+keyvals.colour[which(res$padj>=0.05)] = "gray"
+names(keyvals.colour)[which(res$padj>=0.05)] = "Not Significant"
 
 pdf(file.path(opt$output,"VolcanoPlot.Ash.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
 EnhancedVolcano(resAsh, 
@@ -520,12 +528,12 @@ EnhancedVolcano(resAsh,
 								x="log2FoldChange", 
 								y="pvalue", 
 								xlim=c(-6, 6), 
-								title="DEGs", 
-								pCutoff=0.1, 
-								FCcutoff=0.5, 
-								colCustom= keyvals.colour, 
+								title="DEGs",
+								pCutoffCol="pvalue", 
+								pCutoff=0.05, 
+								FCcutoff=0.58, 
+								#colCustom= keyvals.colour, 
 								colAlpha=1)
-
 dev.off()
 
 
@@ -667,8 +675,8 @@ write.table(res_filter, file.path(opt$output, "results.filtered.txt"), row.names
 write.csv(res_filter, file.path(opt$output,"results.filtered.csv"), row.names = FALSE, quote = FALSE)
 
 #Heatmap DEG res_
-res_filter <- merge(as.data.frame(res_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
-norm_counts_DEG <- res_filter[c(1,14:ncol(res_filter))]
+res_filter_norm <- merge(as.data.frame(res_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
+norm_counts_DEG <- res_filter_norm[c(1,14:ncol(res_filter_norm))]
 rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
 norm_counts_DEG$Row.names <- NULL
 
@@ -687,7 +695,77 @@ geneTree = as.dendrogram(hr, method="average")
 #     main = "Gene Clustering",
 #     ylab = "Height")
 
-pdf(file.path(opt$output,"heatmap_res_DEG.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"heatmap_res_DEG.normalization.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
+nrow_heat <- nrow(norm_counts_DEG_mat)
+heatmap.2(norm_counts_DEG_mat,
+          Rowv=as.dendrogram(hr), 
+          Colv=as.dendrogram(hc),
+          col=redgreen(100),
+          scale="row",
+          margins = c(7, 7),
+          cexCol = 0.7,
+          labRow = F,
+          main = paste0("DEG results heatmap n=", nrow_heat),
+          trace = "none")
+dev.off()
+
+#Heatmap DEG res_ on vst
+res_filter_vst <- merge(as.data.frame(res_filter), as.data.frame(assay(vst)), by="row.names", sort=FALSE)
+norm_counts_DEG <- res_filter_vst[c(1,14:ncol(res_filter_vst))]
+rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
+norm_counts_DEG$Row.names <- NULL
+
+norm_counts_DEG_mat <- as.matrix(norm_counts_DEG)
+scaledata <- t(scale(t(norm_counts_DEG_mat)))
+hc <- hclust(as.dist(1-cor(scaledata, method="spearman")), method="complete")
+sampleTree = as.dendrogram(hc, method="average")
+#plot(sampleTree,
+#    main = "Sample Clustering",
+#     ylab = "Height")
+
+hr <- hclust(as.dist(1-cor(t(scaledata), method="pearson")), method="complete") # Cluster rows by Pearson correlation.
+geneTree = as.dendrogram(hr, method="average")
+#plot(geneTree,
+#     leaflab = "none",             
+#     main = "Gene Clustering",
+#     ylab = "Height")
+
+pdf(file.path(opt$output,"heatmap_res_DEG.vst.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
+nrow_heat <- nrow(norm_counts_DEG_mat)
+heatmap.2(norm_counts_DEG_mat,
+          Rowv=as.dendrogram(hr), 
+          Colv=as.dendrogram(hc),
+          col=redgreen(100),
+          scale="row",
+          margins = c(7, 7),
+          cexCol = 0.7,
+          labRow = F,
+          main = paste0("DEG results heatmap n=", nrow_heat),
+          trace = "none")
+dev.off()
+
+#Heatmap DEG res_
+res_filter_rlog <- merge(as.data.frame(res_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
+norm_counts_DEG <- res_filter_rlog[c(1,14:ncol(res_filter_rlog))]
+rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
+norm_counts_DEG$Row.names <- NULL
+
+norm_counts_DEG_mat <- as.matrix(norm_counts_DEG)
+scaledata <- t(scale(t(norm_counts_DEG_mat)))
+hc <- hclust(as.dist(1-cor(scaledata, method="spearman")), method="complete")
+sampleTree = as.dendrogram(hc, method="average")
+#plot(sampleTree,
+#    main = "Sample Clustering",
+#     ylab = "Height")
+
+hr <- hclust(as.dist(1-cor(t(scaledata), method="pearson")), method="complete") # Cluster rows by Pearson correlation.
+geneTree = as.dendrogram(hr, method="average")
+#plot(geneTree,
+#     leaflab = "none",             
+#     main = "Gene Clustering",
+#     ylab = "Height")
+
+pdf(file.path(opt$output,"heatmap_res_DEG.rlog.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
 heatmap.2(norm_counts_DEG_mat,
           Rowv=as.dendrogram(hr), 
@@ -710,7 +788,7 @@ rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
 mat  <- mat - rowMeans(mat)
 annocol <- as.data.frame(colData(vst)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.vst.res.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"Top100.vst.res.DEGs.pdf"), height=20, width = 20)
 pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
                    cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
                    treeheight_row = 150, annotation_colors = ann_colors,
@@ -727,7 +805,7 @@ rownames(rlog) <- gsub("\\..*","",rownames(rlog))
 mat  <- assay(rlog)[ topVarGenes_res, ]
 mat  <- mat - rowMeans(mat)
 annocol <- as.data.frame(colData(rlog)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.rlog.res.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"Top100.rlog.res.DEGs.pdf"), height=20, width = 20)
 pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
                    cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
                    treeheight_row = 150, annotation_colors = ann_colors,
@@ -753,9 +831,9 @@ write.table(resApeglm_filter, file.path(opt$output, "results.filtered.apeglm.txt
 #write.xlsx(resApeglm_filter, file.path(opt$output,"results.filtered.apeglm.xlsx"),row.names=FALSE)
 write.csv(resApeglm_filter, file.path(opt$output,"results.filtered.apeglm.csv"), row.names = FALSE, quote = FALSE)
 
-#Heatmap DEG apeglm
-resApeglm_filter <- merge(as.data.frame(resApeglm_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
-norm_counts_DEG <- resApeglm_filter[c(1,14:ncol(resApeglm_filter))]
+#Heatmap DEG apeglm normalization
+resApeglm_filter_norm <- merge(as.data.frame(resApeglm_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
+norm_counts_DEG <- resApeglm_filter_norm[c(1,14:ncol(resApeglm_filter_norm))]
 rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
 norm_counts_DEG$Row.names <- NULL
 
@@ -774,7 +852,77 @@ geneTree = as.dendrogram(hr, method="average")
 #     main = "Gene Clustering",
 #     ylab = "Height")
 
-pdf(file.path(opt$output,"heatmap_resApeglm_DEG.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"heatmap_resApeglm_DEG.normalization.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
+nrow_heat <- nrow(norm_counts_DEG_mat)
+heatmap.2(norm_counts_DEG_mat,
+          Rowv=as.dendrogram(hr), 
+          Colv=as.dendrogram(hc),
+          col=redgreen(100),
+          scale="row",
+          margins = c(7, 7),
+          cexCol = 0.7,
+          labRow = F,
+          main = paste0("DEG Apeglm heatmap n=", nrow_heat),
+          trace = "none")
+dev.off()
+
+#Heatmap DEG apeglm vst
+resApeglm_filter_vst <- merge(as.data.frame(resApeglm_filter), as.data.frame(assay(vst)), by="row.names", sort=FALSE)
+norm_counts_DEG <- resApeglm_filter_vst[c(1,14:ncol(resApeglm_filter_vst))]
+rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
+norm_counts_DEG$Row.names <- NULL
+
+norm_counts_DEG_mat <- as.matrix(norm_counts_DEG)
+scaledata <- t(scale(t(norm_counts_DEG_mat)))
+hc <- hclust(as.dist(1-cor(scaledata, method="spearman")), method="complete")
+sampleTree = as.dendrogram(hc, method="average")
+#plot(sampleTree,
+#     main = "Sample Clustering",
+#    ylab = "Height")
+
+hr <- hclust(as.dist(1-cor(t(scaledata), method="pearson")), method="complete") # Cluster rows by Pearson correlation.
+geneTree = as.dendrogram(hr, method="average")
+#plot(geneTree,
+#     leaflab = "none",             
+#     main = "Gene Clustering",
+#     ylab = "Height")
+
+pdf(file.path(opt$output,"heatmap_resApeglm_DEG.vst.pdf"),height=as.numeric(opt$Height), width = as.numeric(opt$width))
+nrow_heat <- nrow(norm_counts_DEG_mat)
+heatmap.2(norm_counts_DEG_mat,
+          Rowv=as.dendrogram(hr), 
+          Colv=as.dendrogram(hc),
+          col=redgreen(100),
+          scale="row",
+          margins = c(7, 7),
+          cexCol = 0.7,
+          labRow = F,
+          main = paste0("DEG Apeglm heatmap n=", nrow_heat),
+          trace = "none")
+dev.off()
+
+#Heatmap DEG apeglm rlog
+resApeglm_filter_rlog <- merge(as.data.frame(resApeglm_filter), as.data.frame(assay(rlog)), by="row.names", sort=FALSE)
+norm_counts_DEG <- resApeglm_filter_rlog[c(1,14:ncol(resApeglm_filter_rlog))]
+rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
+norm_counts_DEG$Row.names <- NULL
+
+norm_counts_DEG_mat <- as.matrix(norm_counts_DEG)
+scaledata <- t(scale(t(norm_counts_DEG_mat)))
+hc <- hclust(as.dist(1-cor(scaledata, method="spearman")), method="complete")
+sampleTree = as.dendrogram(hc, method="average")
+#plot(sampleTree,
+#     main = "Sample Clustering",
+#    ylab = "Height")
+
+hr <- hclust(as.dist(1-cor(t(scaledata), method="pearson")), method="complete") # Cluster rows by Pearson correlation.
+geneTree = as.dendrogram(hr, method="average")
+#plot(geneTree,
+#     leaflab = "none",             
+#     main = "Gene Clustering",
+#     ylab = "Height")
+
+pdf(file.path(opt$output,"heatmap_resApeglm_DEG.rlog.pdf"),height=as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
 heatmap.2(norm_counts_DEG_mat,
           Rowv=as.dendrogram(hr), 
@@ -797,7 +945,7 @@ rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
 mat  <- mat - rowMeans(mat)
 annocol <- as.data.frame(colData(vst)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.vst.res.apeglm.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"Top100.vst.res.apeglm.DEGs.pdf"), height=20, width = 20)
 pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
                    cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
                    treeheight_row = 150, annotation_colors = ann_colors, 
@@ -813,7 +961,7 @@ rownames(rlog) <- gsub("\\..*","",rownames(rlog))
 mat  <- assay(rlog)[ topVarGenes_res, ]
 mat  <- mat - rowMeans(mat)
 annocol <- as.data.frame(colData(rlog)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.rlog.res.apeglm.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"Top100.rlog.res.apeglm.DEGs.pdf"), height=20, width = 20)
 pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
                    cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
                    treeheight_row = 150, annotation_colors = ann_colors, 
@@ -840,8 +988,8 @@ write.table(resNorm_filter, file.path(opt$output, "results.filtered.norm.txt"), 
 write.csv(resNorm_filter, file.path(opt$output,"results.filtered.norm.csv"), row.names = FALSE, quote = FALSE)
 
 #Heatmap DEG norm
-resNorm_filter <- merge(as.data.frame(resNorm_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
-norm_counts_DEG <- resNorm_filter[c(1,14:ncol(resNorm_filter))]
+resNorm_filter_norm <- merge(as.data.frame(resNorm_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
+norm_counts_DEG <- resNorm_filter_norm[c(1,14:ncol(resNorm_filter_norm))]
 rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
 norm_counts_DEG$Row.names <- NULL
 
@@ -860,7 +1008,77 @@ geneTree = as.dendrogram(hr, method="average")
 #     main = "Gene Clustering",
 #     ylab = "Height")
 
-pdf(file.path(opt$output,"heatmap_resnormDEG.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"heatmap_resnormDEG.normalization.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
+nrow_heat <- nrow(norm_counts_DEG_mat)
+heatmap.2(norm_counts_DEG_mat,
+          Rowv=as.dendrogram(hr), 
+          Colv=as.dendrogram(hc),
+          col=redgreen(100),
+          scale="row",
+          margins = c(7, 7),
+          cexCol = 0.7,
+          labRow = F,
+          main = paste0("DEG norm heatmap n=", nrow_heat),
+          trace = "none")
+dev.off()
+
+#Heatmap DEG vst
+resNorm_filter_vst <- merge(as.data.frame(resNorm_filter), as.data.frame(assay(vst)), by="row.names", sort=FALSE)
+norm_counts_DEG <- resNorm_filter_vst[c(1,14:ncol(resNorm_filter_vst))]
+rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
+norm_counts_DEG$Row.names <- NULL
+
+norm_counts_DEG_mat <- as.matrix(norm_counts_DEG)
+scaledata <- t(scale(t(norm_counts_DEG_mat)))
+hc <- hclust(as.dist(1-cor(scaledata, method="spearman")), method="complete")
+sampleTree = as.dendrogram(hc, method="average")
+#plot(sampleTree,
+#     main = "Sample Clustering",
+#     ylab = "Height")
+
+hr <- hclust(as.dist(1-cor(t(scaledata), method="pearson")), method="complete") # Cluster rows by Pearson correlation.
+geneTree = as.dendrogram(hr, method="average")
+#plot(geneTree,
+#     leaflab = "none",             
+#     main = "Gene Clustering",
+#     ylab = "Height")
+
+pdf(file.path(opt$output,"heatmap_resnormDEG.vst.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
+nrow_heat <- nrow(norm_counts_DEG_mat)
+heatmap.2(norm_counts_DEG_mat,
+          Rowv=as.dendrogram(hr), 
+          Colv=as.dendrogram(hc),
+          col=redgreen(100),
+          scale="row",
+          margins = c(7, 7),
+          cexCol = 0.7,
+          labRow = F,
+          main = paste0("DEG norm heatmap n=", nrow_heat),
+          trace = "none")
+dev.off()
+
+#Heatmap DEG rlog
+resNorm_filter_rlog <- merge(as.data.frame(resNorm_filter), as.data.frame(assay(rlog)), by="row.names", sort=FALSE)
+norm_counts_DEG <- resNorm_filter_vst[c(1,14:ncol(resNorm_filter_vst))]
+rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
+norm_counts_DEG$Row.names <- NULL
+
+norm_counts_DEG_mat <- as.matrix(norm_counts_DEG)
+scaledata <- t(scale(t(norm_counts_DEG_mat)))
+hc <- hclust(as.dist(1-cor(scaledata, method="spearman")), method="complete")
+sampleTree = as.dendrogram(hc, method="average")
+#plot(sampleTree,
+#     main = "Sample Clustering",
+#     ylab = "Height")
+
+hr <- hclust(as.dist(1-cor(t(scaledata), method="pearson")), method="complete") # Cluster rows by Pearson correlation.
+geneTree = as.dendrogram(hr, method="average")
+#plot(geneTree,
+#     leaflab = "none",             
+#     main = "Gene Clustering",
+#     ylab = "Height")
+
+pdf(file.path(opt$output,"heatmap_resnormDEG.rlog.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
 heatmap.2(norm_counts_DEG_mat,
           Rowv=as.dendrogram(hr), 
@@ -883,7 +1101,7 @@ rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
 mat  <- mat - rowMeans(mat)
 annocol <- as.data.frame(colData(vst)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.vst.res.norm.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"Top100.vst.res.norm.DEGs.pdf"), height=20, width = 20)
 pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
                    cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
                    treeheight_row = 150, annotation_colors = ann_colors, 
@@ -899,7 +1117,7 @@ rownames(rlog) <- gsub("\\..*","",rownames(rlog))
 mat  <- assay(rlog)[ topVarGenes_res, ]
 mat  <- mat - rowMeans(mat)
 annocol <- as.data.frame(colData(rlog)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.rlog.res.norm.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"Top100.rlog.res.norm.DEGs.pdf"), height=20, width = 20)
 pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
                    cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
                    treeheight_row = 150, annotation_colors = ann_colors, 
@@ -926,8 +1144,8 @@ write.table(resAsh_filter, file.path(opt$output, "results.filtered.ash.txt"), ro
 write.csv(resAsh_filter, file.path(opt$output,"results.filtered.ash.csv"), row.names = FALSE, quote = FALSE)
 
 #Heatmap DEG Ash
-resAsh_filter <- merge(as.data.frame(resAsh_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
-norm_counts_DEG <- resAsh_filter[c(1,14:ncol(resAsh_filter))]
+resAsh_filter_norm <- merge(as.data.frame(resAsh_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
+norm_counts_DEG <- resAsh_filter_norm[c(1,14:ncol(resAsh_filter_norm))]
 rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
 norm_counts_DEG$Row.names <- NULL
 
@@ -946,7 +1164,42 @@ geneTree = as.dendrogram(hr, method="average")
 #     main = "Gene Clustering",
 #     ylab = "Height")
 
-pdf(file.path(opt$output,"heatmap_Ash_DEG.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"heatmap_Ash_DEG.normalization.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
+nrow_heat <- nrow(norm_counts_DEG_mat)
+heatmap.2(norm_counts_DEG_mat,
+          Rowv=as.dendrogram(hr), 
+          Colv=as.dendrogram(hc),
+          col=redgreen(100),
+          scale="row",
+          margins = c(7, 7),
+          cexCol = 0.7,
+          labRow = F,
+          main = paste0("DEG Ash heatmap n=", nrow_heat),
+          trace = "none")
+dev.off()
+
+#Heatmap DEG Ash vst
+resAsh_filter_vst <- merge(as.data.frame(resAsh_filter), as.data.frame(assay(vst)), by="row.names", sort=FALSE)
+norm_counts_DEG <- resAsh_filter_vst[c(1,14:ncol(resAsh_filter_vst))]
+rownames(norm_counts_DEG) <- norm_counts_DEG$Row.names
+norm_counts_DEG$Row.names <- NULL
+
+norm_counts_DEG_mat <- as.matrix(norm_counts_DEG)
+scaledata <- t(scale(t(norm_counts_DEG_mat)))
+hc <- hclust(as.dist(1-cor(scaledata, method="spearman")), method="complete")
+sampleTree = as.dendrogram(hc, method="average")
+#plot(sampleTree,
+#     main = "Sample Clustering",
+#     ylab = "Height")
+
+hr <- hclust(as.dist(1-cor(t(scaledata), method="pearson")), method="complete") # Cluster rows by Pearson correlation.
+geneTree = as.dendrogram(hr, method="average")
+#plot(geneTree,
+#     leaflab = "none",             
+#     main = "Gene Clustering",
+#     ylab = "Height")
+
+pdf(file.path(opt$output,"heatmap_Ash_DEG.vst.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
 heatmap.2(norm_counts_DEG_mat,
           Rowv=as.dendrogram(hr), 
@@ -969,7 +1222,7 @@ rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
 mat  <- mat - rowMeans(mat)
 annocol <- as.data.frame(colData(vst)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.vst.res.ash.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"Top100.vst.res.ash.DEGs.pdf"), height=20, width = 20)
 pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
                    cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
                    treeheight_row = 150, annotation_colors = ann_colors, 
@@ -985,7 +1238,7 @@ rownames(rlog) <- gsub("\\..*","",rownames(rlog))
 mat  <- assay(rlog)[ topVarGenes_res, ]
 mat  <- mat - rowMeans(mat)
 annocol <- as.data.frame(colData(rlog)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.rlog.res.ash.DEGs.pdf"), as.numeric(opt$Height), width = as.numeric(opt$width))
+pdf(file.path(opt$output,"Top100.rlog.res.ash.DEGs.pdf"), height=20, width = 20)
 pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
                    cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
                    treeheight_row = 150, annotation_colors = ann_colors, 
