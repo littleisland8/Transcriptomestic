@@ -26,7 +26,7 @@ rule hisat2Align:
     params:
         strandness=config["rna_strandness"]
     shell:
-        "hisat2 -p {threads} -x {input.idx} -1 {input.R1} -2 {input.R2} | samtools view -Sbh -o {output} 2>{log}"
+        "hisat2 -p {threads} -x {input.idx} -s {params.strandness} -1 {input.R1} -2 {input.R2} | samtools view -Sbh -o {output} 2>{log}"
 
 rule SamtoolsSortHisat2:
     input:
