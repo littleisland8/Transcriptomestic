@@ -72,11 +72,12 @@ for(i in 2:length(files_counts)) {
 #preprocessing
 sampleTable <- read.table(opt$sampletable, sep="\t", header=TRUE)
 
-#Rename columns
+#parsing
 names <- sampleTable$sampleName
-colnames(countData) <- c("GeneID", as.character(names))
+colnames(countData) <- c("GeneID", sapply(colnames(countData)[2:length(colnames(countData))], function(x) unlist(strsplit(x,".", fixed=TRUE))[2]))
 rownames(countData) <- countData$GeneID
-countData <- countData[,c(2:ncol(countData))]
+countData <- countData[,as.character(names)]
+#countData <- countData[,c(2:ncol(countData))]
 
 # export table countdata
 write.table(countData, file.path(opt$output,"countdata_FeatureCounts.txt"), quote = FALSE, sep = "\t", row.names = TRUE)
