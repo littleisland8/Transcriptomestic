@@ -80,7 +80,7 @@ ddsHTSeq <- DESeqDataSetFromHTSeqCount(sampleTable = sampleTable, directory = in
 ddsHTSeq <- estimateSizeFactors(ddsHTSeq)
 
 #Rename columns
-names <- sampleTable$sampleName
+names <- unlist(strsplit(list.files(indir,"*.count$", full.names = F),".STAR.gene.count"))
 colnames(countData) <- c("GeneID", as.character(names))
 rownames(countData) <- countData$GeneID
 countData <- countData[,c(2:ncol(countData))]
