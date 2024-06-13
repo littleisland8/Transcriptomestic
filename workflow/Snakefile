@@ -34,8 +34,9 @@ rule Hisat2_HTSeq:
 	input:
 		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
-		expand(f"count/htseq/hisat2/{{sample}}.hisat2.gene.count", sample=config["samples"].values()),
-		directory("results/Hisat2_HTSeq")
+		expand(f"alignments/{{sample}}.hisat2.srt.bam", sample=config["samples"].values())
+		#expand(f"count/htseq/hisat2/{{sample}}.hisat2.gene.count", sample=config["samples"].values()),
+		#directory("results/Hisat2_HTSeq")
 
 rule Hisat2_featureCounts:
 	input:

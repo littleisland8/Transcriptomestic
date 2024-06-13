@@ -24,9 +24,10 @@ rule hisat2Align:
     log:
         "logs/{sample}.hisat2Align.log"
     params:
-        strandness=config["rna_strandness"]
+        strandness=config["rna_strandness"],
+        report="alignments/{sample}.hisat2.report"
     shell:
-        "hisat2 -p {threads} -x {input.idx} -s {params.strandness} -1 {input.R1} -2 {input.R2} | samtools view -Sbh -o {output} 2>{log}"
+        "hisat2 -p {threads} -x {input.idx} --summary-file {params.report} -1 {input.R1} -2 {input.R2} | samtools view -Sbh -o {output} 2>{log}"
 
 rule SamtoolsSortHisat2:
     input:
