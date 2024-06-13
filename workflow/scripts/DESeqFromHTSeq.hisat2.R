@@ -80,10 +80,11 @@ ddsHTSeq <- DESeqDataSetFromHTSeqCount(sampleTable = sampleTable, directory = in
 ddsHTSeq <- estimateSizeFactors(ddsHTSeq)
 
 #Rename columns
-names <- unlist(strsplit(list.files(indir,"*.count$", full.names = F),".STAR.gene.count"))
+names <- unlist(strsplit(list.files(indir,"*.count$", full.names = F),".hisat2.gene.count"))
 colnames(countData) <- c("GeneID", as.character(names))
 rownames(countData) <- countData$GeneID
-countData <- countData[,c(2:ncol(countData))]
+countData <- countData[,as.character(sampleTable$sampleName)]
+#countData <- countData[,c(2:ncol(countData))]
 
 # export table countdata
 write.table(countData, file.path(opt$output,"countdata_HTSeq.txt"), quote = FALSE, sep = "\t", row.names = TRUE)
@@ -98,7 +99,7 @@ condition <- factor(sampleTable$condition)
 
 # Create a coldata frame and instantiate the DESeqDataSet. See ?DESeqDataSetFromMatrix
 (coldata <- data.frame(row.names=colnames(countdata), condition))
-rownames(coldata) <- names
+#rownames(coldata) <- names
 
 ## Filter low counts gene, filter out genes (row) with no count
 smallestGroupSize <- min(c(length(which(sampleTable$condition == "LACTATE")),length(which(sampleTable$condition == "CONTROL"))))
@@ -201,7 +202,7 @@ dev.off()
 ## Plot PCA in order to see sample-to-sample distance
 
 ## PCA
-rlog_pca <- plotPCA(rlog, intgroup = c("condition"), returnData = TRUE)
+rlog_pca <- plotPCA(rlog, intgroup = c("condition"), returnData = TRUE, ntop=nrow(assay(rlog)))
 percentVar <- round(100 * attr(rlog_pca, "percentVar"))
 pca_rlog <- ggplot(rlog_pca, aes(x = PC1, y = PC2, color = condition)) +
 	geom_point(size =2) +
@@ -222,7 +223,7 @@ topVarGenes1000 <- head(order(rowVars(assay(rlog)), decreasing = TRUE), 1000)
 rlog1000  <- rlog[ topVarGenes1000, ]
 
 ## PCA
-rlog_pca <- plotPCA(rlog1000, intgroup = c("condition"), returnData = TRUE)
+rlog_pca <- plotPCA(rlog1000, intgroup = c("condition"), returnData = TRUE, ntop=nrow(assay(rlog1000)))
 percentVar <- round(100 * attr(rlog_pca, "percentVar"))
 pca_rlog <- ggplot(rlog_pca, aes(x = PC1, y = PC2, color = condition)) +
 	geom_point(size =2) +
@@ -241,7 +242,7 @@ ggsave(pca_rlog, filename = file.path(opt$output,"2DPCA.rlog.top1k.pdf"),height=
 ## PCA PCAplot
 ## Generate p
 rlog.output <- assay(rlog)
-p <- pca(rlog.output, metadata = coldata, removeVar = 0.1)
+p <- pca(rlog.output, metadata = coldata, removeVar = NULL)
 #Determine optimum number of PCs to retain
 #Let's perform Horn's parallel analysis 
 horn <- parallelPCA(rlog.output)
@@ -267,7 +268,7 @@ dev.off()
 
 
 ## PCA
-vst_pca <- plotPCA(vst, intgroup = c("condition"), returnData = TRUE)
+vst_pca <- plotPCA(vst, intgroup = c("condition"), returnData = TRUE, nrow(assay(vst)))
 percentVar <- round(100 * attr(vst_pca, "percentVar"))
 vst_pca$MF <- annotation$MF
 pca_vst <- ggplot(vst_pca, aes(x = PC1, y = PC2,color = condition)) +
@@ -288,7 +289,7 @@ topVarGenes1000 <- head(order(rowVars(assay(vst)), decreasing = TRUE), 1000)
 vst1000  <- vst[ topVarGenes1000, ]
 
 ## PCA
-vst_pca <- plotPCA(vst1000, intgroup = c("condition"), returnData = TRUE)
+vst_pca <- plotPCA(vst1000, intgroup = c("condition"), returnData = TRUE,nrow(assay(vst1000)))
 percentVar <- round(100 * attr(vst_pca, "percentVar"))
 pca_vst <- ggplot(vst_pca, aes(x = PC1, y = PC2, color = condition)) +
 	geom_point(size =2) +
@@ -307,7 +308,7 @@ ggsave(pca_vst, filename = file.path(opt$output,"2DPCA.vst.top1k.pdf"),height=as
 ## PCA PCAplot
 ## Generate p
 vst.output <- assay(vst)
-p <- pca(vst.output, metadata = coldata, removeVar = 0.1)
+p <- pca(vst.output, metadata = coldata, removeVar = NULL)
 #Determine optimum number of PCs to retain
 #Let's perform Horn's parallel analysis 
 horn <- parallelPCA(vst.output)
