@@ -176,7 +176,7 @@ colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
 
 
 pdf(file.path(opt$output,"heatmap_dist_sample.rlog.pdf"), height=as.numeric(opt$Height), width=as.numeric(opt$width))
-pheatmap(sampleDists,clustering_distance_rows = sampleDists,clustering_distance_cols = sampleDists,col = colors,annotation = annotation,annotation_colors = annotation_colors)
+pheatmap(sampleDistMatrix,clustering_distance_rows = sampleDists,clustering_distance_cols = sampleDists,col = colors,annotation = annotation,annotation_colors = annotation_colors)
 dev.off()
 
 ## Plot clustering dendogram rlog
