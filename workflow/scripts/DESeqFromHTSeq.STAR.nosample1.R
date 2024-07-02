@@ -376,7 +376,6 @@ dev.off()
 ResAnnotation <- function (restable){
   
   #AnnotationDBI
-  restable <- res
   ens.str <- substr(rownames(restable), 1, 15)
   restable$symbol <- mapIds(org.Hs.eg.db,
                             keys=ens.str,
