@@ -1,7 +1,7 @@
 rule featureCountsSTAR:
 	input:
-		bam="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam",
-		bai="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai"
+		bam=config["pipedir"] + "/" + "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam",
+		bai=config["pipedir"] + "/" + "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai"
 	output:
 		"count/featureCounts/STAR/{sample}.STAR.gene.count.featureCounts.tsv"
 	threads: 10
@@ -21,8 +21,8 @@ rule featureCountsSTAR:
 
 rule featureCountsHisat2:
 	input:
-		bam="alignments/{sample}.hisat2.srt.bam",
-		bai="alignments/{sample}.hisat2.srt.bam.bai"
+		bam=config["pipedir"] + "/" + "alignments/{sample}.hisat2.srt.bam",
+		bai=config["pipedir"] + "/" + "alignments/{sample}.hisat2.srt.bam.bai"
 	output:
 		"count/featureCounts/hisat2/{sample}.hisat2.gene.count.featureCounts.tsv"
 	threads: 10

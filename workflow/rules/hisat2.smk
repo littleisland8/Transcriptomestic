@@ -13,8 +13,8 @@ rule hisat2_index:
 
 rule hisat2Align:
     input:
-        R1="data/{sample}_1.tr.fq.gz", 
-        R2="data/{sample}_2.tr.fq.gz",
+        R1=config["pipedir"] + "/" + "data/{sample}_R1.tr.fastq.gz", 
+        R2=config["pipedir"] + "/" + "data/{sample}_R2.tr.fastq.gz",
         idx="resources" + "/" + config["genome"].split("resources/")[1].split(".fa")[0] + "_hisat2"
     output:
         "alignments/{sample}.hisat2.bam"
@@ -31,9 +31,9 @@ rule hisat2Align:
 
 rule SamtoolsSortHisat2:
     input:
-        "alignments/{sample}.hisat2.bam"
+        config["pipedir"] + "/" + "alignments/{sample}.hisat2.bam"
     output:
-        "alignments/{sample}.hisat2.srt.bam"
+        config["pipedir"] + "/" + "alignments/{sample}.hisat2.srt.bam"
     log:
         "logs/{sample}.SamtoolsSortHisat2.log",
     conda:
@@ -44,9 +44,9 @@ rule SamtoolsSortHisat2:
 
 rule SamtoolsIndexHisat2:
     input:
-        "alignments/{sample}.hisat2.srt.bam"
+        config["pipedir"] + "/" + "alignments/{sample}.hisat2.srt.bam"
     output:
-        "alignments/{sample}.hisat2.srt.bam.bai",
+        config["pipedir"] + "/" + "alignments/{sample}.hisat2.srt.bam.bai",
     log:
         "logs/{sample}.SamtoolsIndexHisat2.log",
     params:

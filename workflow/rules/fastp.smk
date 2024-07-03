@@ -1,13 +1,13 @@
 rule fastpTumor: ## aggiungere flag per i threads
 	input:
-		sample=[config["datadir"] + "/" + "{sample}_1.fq.gz", config["datadir"] + "/" + "{sample}_2.fq.gz"]
+		sample=[config["datadir"] + "/" + "{sample}_R1.fastq.gz", config["datadir"] + "/" + "{sample}_R2.fastq.gz"]
 	output:
-		trimmed=["data/{sample}_1.tr.fq.gz", "data/{sample}_2.tr.fq.gz"],
-		json="data/{sample}.json",
-		failed="data/{sample}.failedreads.txt",
-		html="data/{sample}.html",
-		unpaired1="data/{sample}.u1.fq.gz",
-		unpaired2="data/{sample}.u2.fq.gz"
+		trimmed=[config["pipedir"] + "/" + "data/{sample}_R1.tr.fastq.gz", config["pipedir"] + "/" + "data/{sample}_R2.tr.fastq.gz"],
+		json=config["pipedir"] + "/" + "data/{sample}.json",
+		failed=config["pipedir"] + "/" + "data/{sample}.failedreads.txt",
+		html=config["pipedir"] + "/" + "data/{sample}.html",
+		unpaired1=config["pipedir"] + "/" + "data/{sample}.u1.fastq.gz",
+		unpaired2=config["pipedir"] + "/" + "data/{sample}.u2.fastq.gz"
 	threads: 1
 	log:
 		"logs/{sample}.fastp.log"

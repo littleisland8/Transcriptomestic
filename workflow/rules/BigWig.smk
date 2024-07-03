@@ -1,7 +1,7 @@
 rule GenerateBigWigSTAR:
     input:
-        bam="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam",
-        bai="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai"
+        bam=config["pipedir"] + "/" + "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam",
+        bai=config["pipedir"] + "/" + "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai"
     output:
         "alignments/{sample}.STAR.bw",
     log:
@@ -14,8 +14,8 @@ rule GenerateBigWigSTAR:
 
 rule GenerateBigWigHisat2:
     input:
-        bam="alignments/{sample}.hisat2.bam",
-        bai="alignments/{sample}.hisat2.bam.bai"
+        bam=config["pipedir"] + "/" + "alignments/{sample}.hisat2.srt.bam",
+        bai=config["pipedir"] + "/" + "alignments/{sample}.hisat2.srt.bam.bai"
     output:
         "alignments/{sample}.hisat2.bw",
     log:

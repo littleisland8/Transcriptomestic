@@ -153,6 +153,8 @@ y <- gsePathway(genelist,
 
 y <- setReadable(y, 'org.Hs.eg.db', 'ENTREZID')
 
+save(y,file=file.path(reactomepath,"GSEA.rda"))
+
 gsea_tableReactome <- y@result
 write.table(gsea_tableReactome,file.path(reactomepath,"gsea.table.txt"), sep = "\t", quote = FALSE)
 write.csv(gsea_tableReactome, file.path(reactomepath, "gsea.table.csv"), quote = FALSE)
@@ -160,6 +162,25 @@ write.csv(gsea_tableReactome, file.path(reactomepath, "gsea.table.csv"), quote =
 
 p <- ridgeplot(y,core_enrichment = TRUE, showCategory=10)
 ggsave(file.path(reactomepath,"ridgeplot.pdf"))
+
+#RHO GTPase Effectors
+selected_ <- "RHO GTPase Effectors"
+p1 <- gseaplot(y, geneSetID = 1, by = "runningScore", title = selected_)
+p2 <- gseaplot(y, geneSetID = 1, by = "preranked", title = selected_)
+p3 <- gseaplot(y, geneSetID = 1, title = selected_)
+p4 <- gseaplot2(y, geneSetID = 1, title = selected_)
+#p <- cowplot::plot_grid(p1, p2, p3, ncol=1, labels=LETTERS[1:3])
+pdf(file.path(reactomepath,"gsea.top.RHO.pdf"))
+gseaplot(y, geneSetID =  9, title = y$Description[9])
+dev.off()
+
+#Transcriptional Regulation by TP53
+selected_ <- "Transcriptional Regulation by TP53"
+p4 <- gseaplot2(y, geneSetID = 1, title = selected_)
+#p <- cowplot::plot_grid(p1, p2, p3, ncol=1, labels=LETTERS[1:3])
+pdf(file.path(reactomepath,"gsea.top.TP53.pdf"))
+gseaplot(y, geneSetID = 18, title = y$Description[18])
+dev.off()
 
 #GSEA KEGG
 KEGGoutdir <- paste(file.path(outputdir, "KEGG"))
@@ -181,13 +202,31 @@ kk2 <- gseKEGG(geneList      = genelist,
 
 kk2 <- setReadable(kk2, 'org.Hs.eg.db', 'ENTREZID')
 
+save(kk2,file=file.path(KEGGoutdir,"GSEA.rda"))
+
 gsea_tableKEGG <- kk2@result
 write.table(gsea_tableKEGG,file.path(KEGGoutdir,"gsea.table.txt"), sep = "\t", quote = FALSE)
 write.csv(gsea_tableKEGG, file.path(KEGGoutdir, "gsea.table.csv"), quote = FALSE)
 write.xlsx(gsea_tableKEGG, file.path(KEGGoutdir,"gsea.table.xlsx"))
 
 ridgeplot(kk2,core_enrichment = TRUE, showCategory=10)
-ggsave(file.path(reactomepath,"ridgeplot.pdf"))
+ggsave(file.path(KEGGoutdir,"ridgeplot.pdf"))
+
+#Cell cycle
+selected_ <- "Cell cycle"
+p4 <- gseaplot2(kk2, geneSetID = 2, title = selected_)
+#p <- cowplot::plot_grid(p1, p2, p3, ncol=1, labels=LETTERS[1:3])
+pdf(file.path(KEGGoutdir,"gsea.top.cellcycle.pdf"))
+gseaplot(y, geneSetID = 2, title = selected_)
+dev.off()
+
+#Apoptosis
+selected_ <- "Apoptosis"
+p4 <- gseaplot2(kk2, geneSetID = 19, title = selected_)
+#p <- cowplot::plot_grid(p1, p2, p3, ncol=1, labels=LETTERS[1:3])
+pdf(file.path(KEGGoutdir,"gsea.top.apoptosis.pdf"))
+gseaplot(y, geneSetID = 19, title = selected_)
+dev.off()
 
 #GSEA Wiki
 wikipath <- paste(file.path(outputdir, "Wiki"))
@@ -270,6 +309,8 @@ y <- GSEA(genelist,
           exponent      = 0.0001)
 
 Hgsea <- setReadable(y, 'org.Hs.eg.db', 'ENTREZID')
+save(Hgsea,file=file.path(Hpath,"GSEA.rda"))
+
 gsea_tableH <- Hgsea@result
 write.table(gsea_tableH,file.path(Hpath,"gsea.table.txt"), sep = "\t", quote = FALSE)
 write.csv(gsea_tableH, file.path(Hpath, "gsea.table.csv"), quote = FALSE)
@@ -277,6 +318,54 @@ write.xlsx(gsea_tableH, file.path(Hpath,"gsea.table.xlsx"))
 
 p <- ridgeplot(Hgsea,core_enrichment = TRUE, showCategory=10)
 ggsave(file.path(Hpath,"ridgeplot.pdf"))
+
+
+pdf(file.path(Hpath,"gsea.top.p53.pdf"))
+gseaplot(Hgsea, geneSetID = 5, title = Hgsea$Description[5])
+dev.off()
+
+#HALLMARK_E2F_TARGETS
+selected_ <- "HALLMARK_E2F_TARGETS"
+#p4 <- gseaplot2(Hgsea, geneSetID = 1, title = Hgsea$Description[1])
+#p <- cowplot::plot_grid(p1, p2, p3, ncol=1, labels=LETTERS[1:3])
+pdf(file.path(Hpath,"gsea.top.E2F.pdf"))
+gseaplot(Hgsea, geneSetID = 1, title = Hgsea$Description[1])
+dev.off()
+
+#HALLMARK_TNFA_SIGNALING_VIA_NFKB
+selected_ <- "HALLMARK_TNFA_SIGNALING_VIA_NFKB"
+#p <- cowplot::plot_grid(p1, p2, p3, ncol=1, labels=LETTERS[1:3])
+pdf(file.path(Hpath,"gsea.top.TNFA.pdf"))
+gseaplot(Hgsea, geneSetID = 2, title = Hgsea$Description[2])
+dev.off()
+
+#HALLMARK_G2M_CHECKPOINT
+selected_ <- "HALLMARK_G2M_CHECKPOINT"
+#p <- cowplot::plot_grid(p1, p2, p3, ncol=1, labels=LETTERS[1:3])
+pdf(file.path(Hpath,"gsea.top.G2M.pdf"))
+gseaplot(Hgsea, geneSetID = 3, title = Hgsea$Description[3])
+dev.off()
+
+#HALLMARK_MYC_TARGETS_V1
+selected_ <- "HALLMARK_MYC_TARGETS_V1"
+#p <- cowplot::plot_grid(p1, p2, p3, ncol=1, labels=LETTERS[1:3])
+pdf(file.path(Hpath,"gsea.top.MYC.pdf"))
+gseaplot(Hgsea, geneSetID = 4, title = Hgsea$Description[4])
+dev.off()
+
+#HALLMARK_KRAS_SIGNALING_DN
+selected_ <- "HALLMARK_KRAS_SIGNALING_DN"
+#p <- cowplot::plot_grid(p1, p2, p3, ncol=1, labels=LETTERS[1:3])
+pdf(file.path(Hpath,"gsea.top.KRAS.pdf"))
+gseaplot(Hgsea, geneSetID = 9, title = Hgsea$Description[9])
+dev.off()
+
+#HALLMARK_PI3K_AKT_MTOR_SIGNALING
+selected_ <- "HALLMARK_PI3K_AKT_MTOR_SIGNALING"
+#p <- cowplot::plot_grid(p1, p2, p3, ncol=1, labels=LETTERS[1:3])
+pdf(file.path(Hpath,"gsea.top.PI3K.pdf"))
+gseaplot(Hgsea, geneSetID = 25, title = Hgsea$Description[25])
+dev.off()
 
 
 #GSEA NCG
@@ -453,6 +542,9 @@ y <- GSEA(genelist,
 )
 
 C6gsea <- setReadable(y, 'org.Hs.eg.db', 'ENTREZID')
+
+save(C6gsea, file=file.path(C6path,"GSEA.rda"))
+
 gsea_tableC6 <- C6gsea@result
 write.table(gsea_tableC6,file.path(C6path,"gsea.table.txt"), sep = "\t", quote = FALSE)
 write.csv(gsea_tableC6, file.path(C6path, "gsea.table.csv"), quote = FALSE)
@@ -460,6 +552,26 @@ write.csv(gsea_tableC6, file.path(C6path, "gsea.table.csv"), quote = FALSE)
 
 p <- ridgeplot(C6gsea,core_enrichment = TRUE, showCategory=10)
 ggsave(file.path(C6path,"ridgeplot.pdf"))
+
+#P53_DN.V1_UP
+selected_ <- "P53_DN.V1_UP"
+pdf(file.path(C6path,"gsea.top.p53.pdf"))
+gseaplot(C6gsea, geneSetID = 17, title = selected_)
+dev.off()
+
+#KRAS.600_UP.V1_DN
+selected_ <- "KRAS.600_UP.V1_DN"
+#p <- cowplot::plot_grid(p1, p2, p3, ncol=1, labels=LETTERS[1:3])
+pdf(file.path(C6path,"gsea.top.kras.pdf"))
+gseaplot(C6gsea, geneSetID = 15, title = selected_)
+dev.off()
+
+#AKT_UP.V1_DN
+selected_ <- "AKT_UP.V1_DN"
+#p <- cowplot::plot_grid(p1, p2, p3, ncol=1, labels=LETTERS[1:3])
+pdf(file.path(C6path,"gsea.top.akt.pdf"))
+gseaplot(C6gsea, geneSetID = 18, title = C6gsea$Description[18])
+dev.off()
 
 #GSEA C7
 C7path <- file.path(Msigdbrpath,"C7")

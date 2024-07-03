@@ -21,10 +21,10 @@ rule STARAlign:
     input:
         log="resources/GRCh38_full_analysis_set_plus_decoy_hla_STAR/Log.out",
         idx=directory("resources/GRCh38_full_analysis_set_plus_decoy_hla_STAR"),
-        R1="data/{sample}_1.tr.fq.gz",
-        R2="data/{sample}_2.tr.fq.gz"
+        R1=config["pipedir"] + "/" + "data/{sample}_R1.tr.fastq.gz",
+        R2=config["pipedir"] + "/" + "data/{sample}_R2.tr.fastq.gz"
     output:
-        "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam"
+        config["pipedir"] + "/" + "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam"
     message:
         "STAR Align"
     threads: 5
@@ -32,17 +32,18 @@ rule STARAlign:
         "../envs/STAR.yaml"
     params:
         readFilesCommand="zcat",
-        gtf=config["gtf"]
+        gtf=config["gtf"],
+        outdir=config["pipedir"] + "/" + "alignments"
     log:
         "logs/{sample}.STARAlign.log"
     shell:
-        "STAR --runThreadN {threads} --readFilesCommand {params.readFilesCommand} --outFileNamePrefix alignments/{wildcards.sample}.STAR. --outSAMunmapped Within --outFilterMismatchNmax 10 --quantMode TranscriptomeSAM GeneCounts --chimSegmentMin 15 --outSAMtype BAM SortedByCoordinate --genomeDir {input.idx} --readFilesIn {input.R1} {input.R2} 2>{log}"
+        "STAR --runThreadN {threads} --readFilesCommand {params.readFilesCommand} --outFileNamePrefix {params.outdir}/{wildcards.sample}.STAR. --outSAMunmapped Within --outFilterMismatchNmax 10 --quantMode TranscriptomeSAM GeneCounts --chimSegmentMin 15 --outSAMtype BAM SortedByCoordinate --genomeDir {input.idx} --readFilesIn {input.R1} {input.R2} 2>{log}"
 
 rule SamtoolsIndexSTAR:
     input:
-        "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam"
+        config["pipedir"] + "/" + "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam"
     output:
-        "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai",
+        config["pipedir"] + "/" + "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai",
     log:
         "logs/{sample}.SamtoolsIndexSTAR.log",
     params:

@@ -1,0 +1,8 @@
+channels:
+- conda-forge
+- bioconda
+- defaults
+dependencies:
+- arriba=2.4.0
+- python=3.6
+- star=2.7.11a

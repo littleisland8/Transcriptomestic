@@ -10,6 +10,7 @@ include: "rules/featureCounts.smk"
 include: "rules/salmon.smk"
 include: "rules/DESeqFromHTSeqCount.smk"
 include: "rules/DESeqFromFeatureCounts.smk"
+include: "rules/arriba.smk"
 
 rule BigWig:
 	input:
@@ -34,9 +35,8 @@ rule Hisat2_HTSeq:
 	input:
 		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
-		expand(f"alignments/{{sample}}.hisat2.srt.bam", sample=config["samples"].values())
-		#expand(f"count/htseq/hisat2/{{sample}}.hisat2.gene.count", sample=config["samples"].values()),
-		#directory("results/Hisat2_HTSeq")
+		expand(f"count/htseq/hisat2/{{sample}}.hisat2.gene.count", sample=config["samples"].values()),
+		directory("results/Hisat2_HTSeq")
 
 rule Hisat2_featureCounts:
 	input:
@@ -50,3 +50,10 @@ rule Salmon:
 		directory("resources/salmon_idx"),
 		expand(f"count/{{sample}}_salmon/quant.sf", sample=config["samples"].values()),
 		directory("results/Salmon")
+
+rule GeneFusion:
+	input:
+		expand(f"fusion/{{sample}}.fusions.tsv", sample=config["filtered_samples"].values()),
+		expand(f"fusion/{{sample}}.fusions.srt.vcf.gz.tbi", sample=config["filtered_samples"].values()),
+		expand(f"fusion/{{sample}}.lactate.fusions.vcf.gz", sample=config["paired"].values()),
+		expand(f"fusion/{{sample}}.lactate.fusions.tsv", sample=config["paired"].values())

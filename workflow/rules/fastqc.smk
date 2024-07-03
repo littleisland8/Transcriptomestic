@@ -1,6 +1,6 @@
 rule fastqcUntrimmed:
 	input:
-		config["datadir"] + "/" + "{sample}_{strand}.fq.gz"
+		config["datadir"] + "/" + "{sample}_{strand}.fastq.gz"
 	output:
 		html="qc/{sample}_{strand}_fastqc.html",
 		zip="qc/{sample}_{strand}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
@@ -16,7 +16,7 @@ rule fastqcUntrimmed:
 
 rule fastqcTrimmed:
 	input:
-		"data/{sample}_{strand}.tr.fq.gz"
+		config["pipedir"] + "/" + "data/{sample}_{strand}.tr.fastq.gz"
 	output:
 		html="qc/{sample}_{strand}_tr_fastqc.html",
 		zip="qc/{sample}_{strand}_tr_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename

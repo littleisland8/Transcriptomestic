@@ -1,14 +1,15 @@
+datadir: 
+pipedir: 
 aligndir: alignments
 outdir: results
 logdir: logs
 scriptdir: workflow/scripts
 
 samples:
-    sample1: 1178
-    sample2: 1463
-    sample3: 2020
-    sample4: 2159
-
+    sample1: A1_CT
+    sample2: A2_CT
+    sample3: A3_LA
+    sample4: A4_LA
 strand:
    R1: R1
    R2: R2
@@ -19,34 +20,45 @@ gentrome: resources/gentrome.fa.gz
 
 gtf: resources/Homo_sapiens.GRCh38.111.gtf
 
+protein_domain: resources/arriba_v2.4.0/database/protein_domains_hg38_GRCh38_v2.4.0.gff3
+
+blacklist_arriba: resources/arriba_v2.4.0/database/blacklist_hg38_GRCh38_v2.4.0.tsv.gz
+
+known_fusion: resources/arriba_v2.4.0/database/known_fusions_hg38_GRCh38_v2.4.0.tsv.gz
+
 ################################
 # STAR genome index parameters #
 ################################
-sjdbOverhang: #74 #Put max read length -1
+sjdbOverhang: #Put max read length -1
 
 ################################
 # Hisat2 parameter #
 ################################
-rna_strandness: RF #FR or RF
+rna_strandness: #None per unstranded
 
 ####################
 # HTSeq paramaters #
 ####################
-stranded: reverse
+stranded: #reverse per first strand
 htseqmode: intersection-nonempty
 HTSeq_extra: 30
+
+####################
+# arriba paramaters #
+####################
+strandedAribba: #"no"
 
 ############################
 # featureCounts parameters #
 ############################
-strandedfeatureCounts: 1                                                # Modify after check of RNASeq strandness
+strandedfeatureCounts: #0 #2 per first strand                            # Modify after check of RNASeq strandness
 featureCounts_extra: ' -p --countReadPairs'                             # add if paired_end
 #featureCounts_extra: ' -O --fracOverlap 0.2 -p --countReadPairs'       # add if paired_end and count reads of overlapping genes
 
 ############################
 # salmon parameters #
 ############################
-libType: ISR #ISF or IU
+libType: IU #ISF or IU
 
 #awk 'NR%4 == 2 {lengths[length($0)]++} END {for (l in lengths) {print l, lengths[l]}}' 1178.R1.sub.fastq
 

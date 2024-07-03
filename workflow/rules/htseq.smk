@@ -1,7 +1,7 @@
 rule HtseqcountGeneFromSTAR:
 	input:
-		bam="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam",
-		bai="alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai"
+		bam=config["pipedir"] + "/" + "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam",
+		bai=config["pipedir"] + "/" + "alignments/{sample}.STAR.Aligned.sortedByCoord.out.bam.bai"
 	output:
 		"count/htseq/STAR/{sample}.STAR.gene.count"
 	threads: 1
