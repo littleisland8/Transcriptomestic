@@ -10,7 +10,7 @@ include: "rules/featureCounts.smk"
 include: "rules/salmon.smk"
 include: "rules/DESeqFromHTSeqCount.smk"
 include: "rules/DESeqFromFeatureCounts.smk"
-include: "rules/arriba.smk"
+#include: "rules/arriba.smk"
 
 rule BigWig:
 	input:
@@ -53,7 +53,7 @@ rule Salmon:
 
 rule GeneFusion:
 	input:
-		expand(f"fusion/{{sample}}.fusions.tsv", sample=config["filtered_samples"].values()),
-		expand(f"fusion/{{sample}}.fusions.srt.vcf.gz.tbi", sample=config["filtered_samples"].values()),
-		expand(f"fusion/{{sample}}.lactate.fusions.vcf.gz", sample=config["paired"].values()),
-		expand(f"fusion/{{sample}}.lactate.fusions.tsv", sample=config["paired"].values())
+		expand(f"fusion/{{sample}}.fusions.tsv", sample=config["samples"].values()),
+		expand(f"fusion/{{sample}}.fusions.srt.vcf.gz.tbi", sample=config["samples"].values()),
+		expand(f"fusion/{{sample}}.lactate.fusions.vcf.gz", sample=config["samples"].values()),
+		expand(f"fusion/{{sample}}.lactate.fusions.tsv", sample=config["samples"].values())
