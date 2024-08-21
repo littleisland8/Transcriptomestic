@@ -79,7 +79,7 @@ rule ConvertToVcf:
 
 rule PairedVcf:
 	input:
-		expand(f"fusion/{{sample}}.fusions.srt.vcf.gz", sample=config["filtered_samples"].values())
+		expand(f"fusion/{{sample}}.fusions.srt.vcf.gz", sample=config["samples"].values())
 	output:
 		expand(f"fusion/{{sample}}.lactate.fusions.vcf.gz", sample=config["paired"].values())
 	threads: 1
@@ -113,7 +113,7 @@ rule ParseVcf:
 
 rule MergeVcf:
 	input:
-		expand(f"fusion/{{sample}}.lactate.fusions.vcf.gz", sample=config["filtered_samples"].values())
+		expand(f"fusion/{{sample}}.lactate.fusions.vcf.gz", sample=config["samples"].values())
 	output:
 		"fusion/total.lactate.fusion.vcf.gz"
 	threads:1
