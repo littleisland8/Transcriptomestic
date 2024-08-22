@@ -18,11 +18,12 @@ rule arriba:
 		genome=config["genome"],
 		blacklist=config["blacklist_arriba"],
 		known_fusion=config["known_fusion"],
-		strandedness=config["strandedAribba"]
+		strandedness=config["strandedAribba"],
+		outdir=config["pipedir"] + "/" + "alignments"
 	shell:
 		"STAR --runThreadN 8 \
 	--genomeDir {input.idx} --genomeLoad NoSharedMemory \
-	--readFilesIn {input.R1} {input.R2} --readFilesCommand zcat \
+	--readFilesIn {input.R1} {input.R2} --outFileNamePrefix {params.outdir}/{wildcards.sample}.STAR_arriba. --readFilesCommand zcat \
 	--outStd BAM_Unsorted --outSAMtype BAM Unsorted --outSAMunmapped Within --outBAMcompression 0 \
 	--outFilterMultimapNmax 50 --peOverlapNbasesMin 10 --alignSplicedMateMapLminOverLmate 0.5 --alignSJstitchMismatchNmax 5 -1 5 5 \
 	--chimSegmentMin 10 --chimOutType WithinBAM HardClip --chimJunctionOverhangMin 10 --chimScoreDropMax 30 \
