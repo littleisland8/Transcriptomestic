@@ -26,16 +26,17 @@ sed -i -e '/#/! s/^/chr/' resources/Homo_sapiens.GRCh38.112.gff3
 #Make gentrome 
 
 wget https://ftp.ensembl.org/pub/release-112/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz -P resources/
+wget https://ftp.ensembl.org/pub/release-112/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna_sm.toplevel.fa.gz
 
 cd resources 
 
-grep "^>" GRCh38_full_analysis_set_plus_decoy_hla.fa | cut -d " " -f 1 > decoys.txt
+zgrep "^>" Homo_sapiens.GRCh38.dna_sm.toplevel.fa.gz | cut -d " " -f 1 > decoys.txt
 
 sed -i.bak -e 's/>//g' decoys.txt
 
 bgzip -d Homo_sapiens.GRCh38.cdna.all.fa.gz
 
-cat Homo_sapiens.GRCh38.cdna.all.fa GRCh38_full_analysis_set_plus_decoy_hla.fa > gentrome.fa && bgzip gentrome.fa
+cat  Homo_sapiens.GRCh38.cdna.all.fa.gz Homo_sapiens.GRCh38.dna_sm.toplevel.fa.gz > gentrome.fa.gz
 
 cd -
 
