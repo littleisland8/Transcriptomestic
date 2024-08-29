@@ -51,3 +51,18 @@ rule SamtoolsIndexSTAR:
     threads: 4  # This value - 1 will be sent to -@
     wrapper:
         "v3.3.6/bio/samtools/index"
+
+rule MergeSTARLog:
+    input:
+        expand(config["pipedir"] + "/" + f"alignments/{{sample}}.STAR.Log.final.out", sample=config["samples"].values())
+    output:
+        "qc/STAR.Log.final.tsv"
+    log:
+        "logs/MergeSTARLog.log"
+    threads: 1
+    params:
+        script="workflow/scripts/mergeLogFinal.awk"
+    shell:
+        '''
+        awk -f {params.script} {input} |tr ";" "\t" > {output} 2>{log}
+        '''
