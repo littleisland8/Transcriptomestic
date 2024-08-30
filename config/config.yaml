@@ -6,10 +6,10 @@ logdir: logs
 scriptdir: workflow/scripts
 
 samples:
-    sample1: A1_CT
-    sample2: A2_CT
-    sample3: A3_LA
-    sample4: A4_LA
+    sample1: A1_CTR
+    sample2: A2_CTR
+    sample3: A3_TUMOR
+    sample4: A4_TUMOR
 strand:
    R1: R1
    R2: R2
