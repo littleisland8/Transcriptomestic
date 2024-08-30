@@ -100,7 +100,7 @@ condition <- factor(sampleTable$condition)
 (coldata <- data.frame(row.names=colnames(countdata), condition))
 
 ## Filter low counts gene, filter out genes (row) with no count
-smallestGroupSize <- min(c(length(which(sampleTable$condition == "LACTATE")),length(which(sampleTable$condition == "CONTROL"))))
+smallestGroupSize <- min(c(length(which(sampleTable$condition == "TUMOR")),length(which(sampleTable$condition == "CONTROL"))))
 keep <- rowSums(counts(ddsTxi) >= as.numeric(opt$count)) >= smallestGroupSize
 dds <- ddsTxi[keep,]
 dds$condition <- relevel(dds$condition, ref = "CONTROL")
@@ -168,7 +168,7 @@ cols <- colorRampPalette(brewer.pal(9, "Set1"))
 mycolors <- cols(length(unique(annotation$pts)))
 names(mycolors) <- unique(annotation$pts)
 annotation_colors = list(
-	Phase = c(LACTATE="red", CONTROL="green"))
+	Phase = c(TUMOR="red", CONTROL="green"))
 
 colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
 
@@ -336,7 +336,7 @@ dev.off()
 design(dds) <- ~ condition
 dds <- DESeq(dds,fitType='local')
 
-res <- results(dds, contrast = c("condition", "LACTATE","CONTROL"), alpha = as.numeric(opt$alpha))
+res <- results(dds, contrast = c("condition", "TUMOR","CONTROL"), alpha = as.numeric(opt$alpha))
 
 ## export MA
 pdf(file.path(opt$output,"MA_plot.pdf"), height = as.numeric(opt$Height), width = as.numeric(opt$width))
@@ -429,10 +429,10 @@ EnhancedVolcano(res,
 dev.off()
 
 
-## lfcShrink function to shrink the log2 fold changes for the comparison of dex LACTATE vs Control samples
-resLFC <- lfcShrink(dds, coef="condition_LACTATE_vs_CONTROL", type="apeglm", res = res)
-resNorm <- lfcShrink(dds, coef="condition_LACTATE_vs_CONTROL", type="normal", res = res)
-resAsh <- lfcShrink(dds, coef="condition_LACTATE_vs_CONTROL", type="ashr", res = res)
+## lfcShrink function to shrink the log2 fold changes for the comparison of dex TUMOR vs Control samples
+resLFC <- lfcShrink(dds, coef="condition_TUMOR_vs_CONTROL", type="apeglm", res = res)
+resNorm <- lfcShrink(dds, coef="condition_TUMOR_vs_CONTROL", type="normal", res = res)
+resAsh <- lfcShrink(dds, coef="condition_TUMOR_vs_CONTROL", type="ashr", res = res)
 
 #Independent hypothesis weighting
 #resIHW <- results(dds, filterFun=ihw, alpha = 0.05)
@@ -784,7 +784,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_ vst
 mypalette <- brewer.pal(11, "RdYlBu")
 morecols <- colorRampPalette(mypalette)
-ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
+ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
 topVarGenes_res <- res_filter$EnsemblID[1:100]
 rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
@@ -801,7 +801,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_ rlog
 #mypalette <- brewer.pal(11, "RdYlBu")
 #morecols <- colorRampPalette(mypalette)
-#ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
+#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
 #topVarGenes_res <- res_filter$EnsemblID[1:100]
 rownames(rlog) <- gsub("\\..*","",rownames(rlog))
 mat  <- assay(rlog)[ topVarGenes_res, ]
@@ -941,7 +941,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_apeglm vst
 mypalette <- brewer.pal(11, "RdYlBu")
 morecols <- colorRampPalette(mypalette)
-ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
+ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
 topVarGenes_res <- resApeglm_filter$EnsemblID[1:100]
 rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
@@ -957,7 +957,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_apeglm rlog
 #mypalette <- brewer.pal(11, "RdYlBu")
 #morecols <- colorRampPalette(mypalette)
-#ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
+#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
 #topVarGenes_res <- resApeglm_filter$EnsemblID[1:100]
 rownames(rlog) <- gsub("\\..*","",rownames(rlog))
 mat  <- assay(rlog)[ topVarGenes_res, ]
@@ -1097,7 +1097,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_norm vst
 mypalette <- brewer.pal(11, "RdYlBu")
 morecols <- colorRampPalette(mypalette)
-ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
+ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
 topVarGenes_res <- resNorm_filter$EnsemblID[1:100]
 rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
@@ -1113,7 +1113,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_norm rlog
 #mypalette <- brewer.pal(11, "RdYlBu")
 #morecols <- colorRampPalette(mypalette)
-#ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
+#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
 #topVarGenes_res <- resNorm_filter$EnsemblID[1:100]
 rownames(rlog) <- gsub("\\..*","",rownames(rlog))
 mat  <- assay(rlog)[ topVarGenes_res, ]
@@ -1253,7 +1253,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_ash vst
 mypalette <- brewer.pal(11, "RdYlBu")
 morecols <- colorRampPalette(mypalette)
-ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
+ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
 topVarGenes_res <- resAsh_filter$EnsemblID[1:100]
 rownames(vst) <- gsub("\\..*","",rownames(vst))
 mat  <- assay(vst)[ topVarGenes_res, ]
@@ -1269,7 +1269,7 @@ dev.off()
 # graph for first 100 top regulated genes for res_ash rlog
 #mypalette <- brewer.pal(11, "RdYlBu")
 #morecols <- colorRampPalette(mypalette)
-#ann_colors <- list(CellType= c(CONTROL="orange", LACTATE="purple"))
+#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
 #topVarGenes_res <- resAsh_filter$EnsemblID[1:100]
 rownames(rlog) <- gsub("\\..*","",rownames(rlog))
 mat  <- assay(rlog)[ topVarGenes_res, ]
