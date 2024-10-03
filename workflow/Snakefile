@@ -10,7 +10,7 @@ include: "rules/featureCounts.smk"
 include: "rules/salmon.smk"
 include: "rules/DESeqFromHTSeqCount.smk"
 include: "rules/DESeqFromFeatureCounts.smk"
-#include: "rules/arriba.smk"
+include: "rules/arriba.smk"
 
 rule BigWig:
 	input:
