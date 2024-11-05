@@ -211,7 +211,8 @@ pca_rlog <- ggplot(rlog_pca, aes(x = PC1, y = PC2, color = condition)) +
 									 box.padding   = 0.25, 
 									 point.padding = 0.35,
 									 segment.color = 'grey50',
-									 max.overlaps = 60) 
+									 max.overlaps = 60) + 
+  scale_color_manual(values = c("TUMOR" = "red", "CONTROL" = "green"))
 
 ggsave(pca_rlog, filename = file.path(opt$output,"2DPCA.rlog.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
 
@@ -232,7 +233,8 @@ pca_rlog <- ggplot(rlog_pca, aes(x = PC1, y = PC2, color = condition)) +
 									 box.padding   = 0.25, 
 									 point.padding = 0.35,
 									 segment.color = 'grey50',
-									 max.overlaps = 60) 
+									 max.overlaps = 60) +
+	scale_color_manual(values = c("TUMOR" = "red", "CONTROL" = "green"))
 
 ggsave(pca_rlog, filename = file.path(opt$output,"2DPCA.rlog.top1k.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
 
@@ -252,9 +254,9 @@ pdf(file.path(opt$output,"screeplot.rlog.pdf"), height=as.numeric(opt$Height), w
 screeplot(p,
           components = getComponents(p, 1:11),
           vline = c(horn$n, elbow)) +
-  geom_label(aes(x = horn$n + 1, y = 50,
+  geom_label(aes(x = horn$n, y = 50,
                  label = 'Horn\'s', vjust = -1, size = 8)) +
-  geom_label(aes(x = elbow + 1, y = 50,
+  geom_label(aes(x = elbow, y = 50,
                  label = 'Elbow method', vjust = 1, size = 8))
 dev.off()
 
@@ -278,7 +280,9 @@ pca_vst <- ggplot(vst_pca, aes(x = PC1, y = PC2,color = condition)) +
 									 box.padding   = 0.25, 
 									 point.padding = 0.35,
 									 segment.color = 'grey50',
-									 max.overlaps = 60) 
+									 max.overlaps = 60) + 
+	scale_color_manual(values = c("TUMOR" = "red", "CONTROL" = "green"))
+
 ggsave(pca_vst, filename = file.path(opt$output,"2DPCA.vst.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
 
 ## topVar 1000 genes
@@ -298,7 +302,8 @@ pca_vst <- ggplot(vst_pca, aes(x = PC1, y = PC2, color = condition)) +
 									 box.padding   = 0.25, 
 									 point.padding = 0.35,
 									 segment.color = 'grey50',
-									 max.overlaps = 60) 
+									 max.overlaps = 60) +
+	scale_color_manual(values = c("TUMOR" = "red", "CONTROL" = "green"))
 
 ggsave(pca_vst, filename = file.path(opt$output,"2DPCA.vst.top1k.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
 
@@ -318,9 +323,9 @@ pdf(file.path(opt$output,"screeplot.vst.pdf"), height=as.numeric(opt$Height), wi
 screeplot(p,
           components = getComponents(p, 1:11),
           vline = c(horn$n, elbow)) +
-  geom_label(aes(x = horn$n + 1, y = 50,
+  geom_label(aes(x = horn$n, y = 50,
                  label = 'Horn\'s', vjust = -1, size = 8)) +
-  geom_label(aes(x = elbow + 1, y = 50,
+  geom_label(aes(x = elbow, y = 50,
                  label = 'Elbow method', vjust = 1, size = 8))
 dev.off()
 
@@ -678,6 +683,11 @@ write.table(res_filter, file.path(opt$output, "results.filtered.txt"), row.names
 #write.xlsx(res_filter, file.path(opt$output,"results.filtered.xlsx"),row.names=FALSE)
 write.csv(res_filter, file.path(opt$output,"results.filtered.csv"), row.names = FALSE, quote = FALSE)
 
+
+# Define color palette for annotation
+condition_colors <- c("NR" = "red", "R" = "green")
+col_annotation <- condition_colors[annotation$Phase]
+
 #Heatmap DEG res_
 res_filter_norm <- merge(as.data.frame(res_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
 norm_counts_DEG <- res_filter_norm[c(1,14:ncol(res_filter_norm))]
@@ -710,7 +720,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG results heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG res_ on vst
@@ -745,7 +756,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG results heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG res_
@@ -780,7 +792,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG results heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 # graph for first 100 top regulated genes for res_ vst
@@ -867,7 +880,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG Apeglm heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG apeglm vst
@@ -902,7 +916,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG Apeglm heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG apeglm rlog
@@ -937,7 +952,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG Apeglm heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 # graph for first 100 top regulated genes for res_apeglm vst
@@ -1023,7 +1039,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG norm heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG vst
@@ -1058,7 +1075,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG norm heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG rlog
@@ -1093,7 +1111,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG norm heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 # graph for first 100 top regulated genes for res_norm vst
@@ -1179,7 +1198,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG Ash heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG Ash vst
@@ -1214,7 +1234,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG Ash heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG Ash rlog
@@ -1249,7 +1270,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG Ash heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 # graph for first 100 top regulated genes for res_ash vst

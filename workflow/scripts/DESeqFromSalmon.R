@@ -200,7 +200,7 @@ dev.off()
 ## Plot PCA in order to see sample-to-sample distance
 
 ## PCA
-rlog_pca <- plotPCA(rlog, intgroup = c("condition"), returnData = TRUE)
+rlog_pca <- plotPCA(rlog, intgroup = c("condition"), returnData = TRUE,ntop=nrow(assay(rlog)))
 percentVar <- round(100 * attr(rlog_pca, "percentVar"))
 pca_rlog <- ggplot(rlog_pca, aes(x = PC1, y = PC2, color = condition)) +
 	geom_point(size =2) +
@@ -212,7 +212,8 @@ pca_rlog <- ggplot(rlog_pca, aes(x = PC1, y = PC2, color = condition)) +
 									 box.padding   = 0.25, 
 									 point.padding = 0.35,
 									 segment.color = 'grey50',
-									 max.overlaps = 60) 
+									 max.overlaps = 60) + 
+  scale_color_manual(values = c("TUMOR" = "red", "CONTROL" = "green"))
 
 ggsave(pca_rlog, filename = file.path(opt$output,"2DPCA.rlog.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
 
@@ -221,7 +222,7 @@ topVarGenes1000 <- head(order(rowVars(assay(rlog)), decreasing = TRUE), 1000)
 rlog1000  <- rlog[ topVarGenes1000, ]
 
 ## PCA
-rlog_pca <- plotPCA(rlog1000, intgroup = c("condition"), returnData = TRUE)
+rlog_pca <- plotPCA(rlog1000, intgroup = c("condition"), returnData = TRUE,ntop=nrow(assay(rlog1000)))
 percentVar <- round(100 * attr(rlog_pca, "percentVar"))
 pca_rlog <- ggplot(rlog_pca, aes(x = PC1, y = PC2, color = condition)) +
 	geom_point(size =2) +
@@ -233,15 +234,15 @@ pca_rlog <- ggplot(rlog_pca, aes(x = PC1, y = PC2, color = condition)) +
 									 box.padding   = 0.25, 
 									 point.padding = 0.35,
 									 segment.color = 'grey50',
-									 max.overlaps = 60) 
+									 max.overlaps = 60) +
+	scale_color_manual(values = c("TUMOR" = "red", "CONTROL" = "green"))
 
 ggsave(pca_rlog, filename = file.path(opt$output,"2DPCA.rlog.top1k.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
-
 
 ## PCA PCAplot
 ## Generate p
 rlog.output <- assay(rlog)
-p <- pca(rlog.output, metadata = coldata, removeVar = 0.1)
+p <- pca(rlog.output, metadata = coldata, removeVar =NULL)
 #Determine optimum number of PCs to retain
 #Let's perform Horn's parallel analysis 
 horn <- parallelPCA(rlog.output)
@@ -254,9 +255,9 @@ pdf(file.path(opt$output,"screeplot.rlog.pdf"), height=as.numeric(opt$Height), w
 screeplot(p,
           components = getComponents(p, 1:11),
           vline = c(horn$n, elbow)) +
-  geom_label(aes(x = horn$n + 1, y = 50,
+  geom_label(aes(x = horn$n, y = 50,
                  label = 'Horn\'s', vjust = -1, size = 8)) +
-  geom_label(aes(x = elbow + 1, y = 50,
+  geom_label(aes(x = elbow, y = 50,
                  label = 'Elbow method', vjust = 1, size = 8))
 dev.off()
 
@@ -267,7 +268,7 @@ dev.off()
 
 
 ## PCA
-vst_pca <- plotPCA(vst, intgroup = c("condition"), returnData = TRUE)
+vst_pca <- plotPCA(vst, intgroup = c("condition"), returnData = TRUE,ntop=nrow(assay(vst)))
 percentVar <- round(100 * attr(vst_pca, "percentVar"))
 vst_pca$MF <- annotation$MF
 pca_vst <- ggplot(vst_pca, aes(x = PC1, y = PC2,color = condition)) +
@@ -280,7 +281,9 @@ pca_vst <- ggplot(vst_pca, aes(x = PC1, y = PC2,color = condition)) +
 									 box.padding   = 0.25, 
 									 point.padding = 0.35,
 									 segment.color = 'grey50',
-									 max.overlaps = 60) 
+									 max.overlaps = 60) + 
+	scale_color_manual(values = c("TUMOR" = "red", "CONTROL" = "green"))
+
 ggsave(pca_vst, filename = file.path(opt$output,"2DPCA.vst.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
 
 ## topVar 1000 genes
@@ -288,7 +291,7 @@ topVarGenes1000 <- head(order(rowVars(assay(vst)), decreasing = TRUE), 1000)
 vst1000  <- vst[ topVarGenes1000, ]
 
 ## PCA
-vst_pca <- plotPCA(vst1000, intgroup = c("condition"), returnData = TRUE)
+vst_pca <- plotPCA(vst1000, intgroup = c("condition"), returnData = TRUE,ntop=nrow(assay(vst1000)))
 percentVar <- round(100 * attr(vst_pca, "percentVar"))
 pca_vst <- ggplot(vst_pca, aes(x = PC1, y = PC2, color = condition)) +
 	geom_point(size =2) +
@@ -300,14 +303,15 @@ pca_vst <- ggplot(vst_pca, aes(x = PC1, y = PC2, color = condition)) +
 									 box.padding   = 0.25, 
 									 point.padding = 0.35,
 									 segment.color = 'grey50',
-									 max.overlaps = 60) 
+									 max.overlaps = 60) +
+	scale_color_manual(values = c("TUMOR" = "red", "CONTROL" = "green"))
 
 ggsave(pca_vst, filename = file.path(opt$output,"2DPCA.vst.top1k.pdf"),height=as.numeric(opt$Height), width=as.numeric(opt$width))
 
 ## PCA PCAplot
 ## Generate p
 vst.output <- assay(vst)
-p <- pca(vst.output, metadata = coldata, removeVar = 0.1)
+p <- pca(vst.output, metadata = coldata, removeVar = NULL)
 #Determine optimum number of PCs to retain
 #Let's perform Horn's parallel analysis 
 horn <- parallelPCA(vst.output)
@@ -320,9 +324,9 @@ pdf(file.path(opt$output,"screeplot.vst.pdf"), height=as.numeric(opt$Height), wi
 screeplot(p,
           components = getComponents(p, 1:11),
           vline = c(horn$n, elbow)) +
-  geom_label(aes(x = horn$n + 1, y = 50,
+  geom_label(aes(x = horn$n, y = 50,
                  label = 'Horn\'s', vjust = -1, size = 8)) +
-  geom_label(aes(x = elbow + 1, y = 50,
+  geom_label(aes(x = elbow, y = 50,
                  label = 'Elbow method', vjust = 1, size = 8))
 dev.off()
 
@@ -334,7 +338,7 @@ dev.off()
 
 ## Differential Expression Analysis 
 design(dds) <- ~ condition
-dds <- DESeq(dds,fitType='local')
+dds <- DESeq(dds)
 
 res <- results(dds, contrast = c("condition", "TUMOR","CONTROL"), alpha = as.numeric(opt$alpha))
 
@@ -427,7 +431,6 @@ EnhancedVolcano(res,
 								colAlpha=1)
 
 dev.off()
-
 
 ## lfcShrink function to shrink the log2 fold changes for the comparison of dex TUMOR vs Control samples
 resLFC <- lfcShrink(dds, coef="condition_TUMOR_vs_CONTROL", type="apeglm", res = res)
@@ -536,7 +539,6 @@ EnhancedVolcano(resAsh,
 								colAlpha=1)
 
 dev.off()
-
 
 
 ## two option for colorPalette
@@ -676,6 +678,17 @@ write.table(res_filter, file.path(opt$output, "results.filtered.txt"), row.names
 #write.xlsx(res_filter, file.path(opt$output,"results.filtered.xlsx"),row.names=FALSE)
 write.csv(res_filter, file.path(opt$output,"results.filtered.csv"), row.names = FALSE, quote = FALSE)
 
+#Export the filtered results
+res_filter <- res_[(which(res_$pvalue <= 0.05 & abs(res_$log2FoldChange)>=0.58)),]
+write.table(res_filter, file.path(opt$output, "results.filtered.txt"), row.names = FALSE, quote = FALSE, sep = "\t")
+#write.xlsx(res_filter, file.path(opt$output,"results.filtered.xlsx"),row.names=FALSE)
+write.csv(res_filter, file.path(opt$output,"results.filtered.csv"), row.names = FALSE, quote = FALSE)
+
+
+# Define color palette for annotation
+condition_colors <- c("NR" = "red", "R" = "green")
+col_annotation <- condition_colors[annotation$Phase]
+
 #Heatmap DEG res_
 res_filter_norm <- merge(as.data.frame(res_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
 norm_counts_DEG <- res_filter_norm[c(1,14:ncol(res_filter_norm))]
@@ -708,7 +721,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG results heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG res_ on vst
@@ -743,7 +757,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG results heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG res_
@@ -778,7 +793,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG results heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 # graph for first 100 top regulated genes for res_ vst
@@ -865,7 +881,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG Apeglm heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG apeglm vst
@@ -900,7 +917,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG Apeglm heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG apeglm rlog
@@ -935,7 +953,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG Apeglm heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 # graph for first 100 top regulated genes for res_apeglm vst
@@ -1021,7 +1040,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG norm heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG vst
@@ -1056,7 +1076,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG norm heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG rlog
@@ -1091,7 +1112,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG norm heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 # graph for first 100 top regulated genes for res_norm vst
@@ -1177,7 +1199,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG Ash heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG Ash vst
@@ -1212,7 +1235,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG Ash heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 #Heatmap DEG Ash rlog
@@ -1247,7 +1271,8 @@ heatmap.2(norm_counts_DEG_mat,
           cexCol = 0.7,
           labRow = F,
           main = paste0("DEG Ash heatmap n=", nrow_heat),
-          trace = "none")
+          trace = "none",
+          ColSideColors = col_annotation)
 dev.off()
 
 # graph for first 100 top regulated genes for res_ash vst
