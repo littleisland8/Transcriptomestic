@@ -10,7 +10,8 @@ include: "rules/featureCounts.smk"
 include: "rules/salmon.smk"
 include: "rules/DESeqFromHTSeqCount.smk"
 include: "rules/DESeqFromFeatureCounts.smk"
-include: "rules/arriba.smk"
+include: "rules/multiqc.smk"
+#include: "rules/arriba.smk"
 
 rule BigWig:
 	input:
@@ -19,9 +20,9 @@ rule BigWig:
 
 rule STAR_HTSeq:
 	input:
-		expand(f"qc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
-		expand(f"qc/{{sample}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
+		expand(config["pipedir"] + "/" + f"fastqc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(),strand=config["strand"].values()),
 		expand(f"count/htseq/STAR/{{sample}}.STAR.gene.count", sample=config["samples"].values()),
+		f"qc/multiqc_report.html"
 		directory("results/STAR_HTSeq")
 
 rule STAR_featureCounts:
