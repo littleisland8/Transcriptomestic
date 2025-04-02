@@ -1,3 +1,3 @@
-GSEA.R
-ORA_padj.down.R
-ORA_padj.upR
+workflow/scripts/GSEA.R
+workflow/scripts/ORA_padj.down.R
+workflow/scripts/ORA_padj.upR
