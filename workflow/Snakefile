@@ -22,7 +22,7 @@ rule STAR_HTSeq:
 	input:
 		expand(config["pipedir"] + "/" + f"fastqc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(),strand=config["strand"].values()),
 		expand(f"count/htseq/STAR/{{sample}}.STAR.gene.count", sample=config["samples"].values()),
-		f"qc/multiqc_report.html"
+		f"qc/multiqc_report.html",
 		directory("results/STAR_HTSeq")
 
 rule STAR_featureCounts:
