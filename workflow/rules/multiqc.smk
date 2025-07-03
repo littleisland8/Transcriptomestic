@@ -1,7 +1,7 @@
 rule multiQC_step1:
 	input:
 		html=expand(config["pipedir"] + "/" + f"fastqc/{{sample}}_{{strand}}_fastqc.html", sample=config["samples"].values(),strand=config["strand"].values()),
-		zip=expand(config["pipedir"] + "/" + f"fastqc/{{sample}}_{{strand}}_fastqc.zip", sample=config["samples"].values(),strand=config["strand"].values()),
+		zip_=expand(config["pipedir"] + "/" + f"fastqc/{{sample}}_{{strand}}_fastqc.zip", sample=config["samples"].values(),strand=config["strand"].values()),
 		bam=expand(config["pipedir"] + "/" + f"alignments/{{sample}}.STAR.Aligned.sortedByCoord.out.bam", sample=config["samples"].values()),
 		counts=expand(f"count/htseq/STAR/{{sample}}.STAR.gene.count", sample=config["samples"].values())
 	output:
