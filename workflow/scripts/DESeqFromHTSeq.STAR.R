@@ -692,8 +692,7 @@ write.csv(res_filter, file.path(opt$output,"results.filtered.csv"), row.names = 
 
 
 # Define color palette for annotation
-condition_colors <- c("NR" = "red", "R" = "green")
-col_annotation <- condition_colors[annotation$Phase]
+condition_colors <- c("TUMOR" = "red", "CONTROL" = "green")
 
 #Heatmap DEG res_
 res_filter_norm <- merge(as.data.frame(res_filter), as.data.frame(counts(dds, normalized=TRUE)), by="row.names", sort=FALSE)
@@ -718,17 +717,23 @@ geneTree = as.dendrogram(hr, method="average")
 
 pdf(file.path(opt$output,"heatmap_res_DEG.normalization.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
-heatmap.2(norm_counts_DEG_mat,
-          Rowv=as.dendrogram(hr), 
-          Colv=as.dendrogram(hc),
-          col=redgreen(100),
-          scale="row",
-          margins = c(7, 7),
-          cexCol = 0.7,
-          labRow = F,
-          main = paste0("DEG results heatmap n=", nrow_heat),
-          trace = "none",
-          ColSideColors = col_annotation)
+pheatmap(norm_counts_DEG_mat,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         color = colorRampPalette(c("red", "black", "green"))(100),
+         scale = "row",
+         fontsize_col = 10,  # Adjusted to approximate cexCol = 0.7
+         show_rownames = FALSE,
+         main = paste0("DEG results heatmap n=", nrow_heat),
+         treeheight_row = 50,  # You can adjust these heights if desired
+         treeheight_col = 50,
+         border_color = NA,
+         fontsize = 12,
+         cellwidth = NA,
+         cellheight = NA,
+         angle_col = 45,
+         annotation_col = annotation,
+         annotation_colors = annotation_colors)
 dev.off()
 
 #Heatmap DEG res_ on vst
@@ -754,17 +759,24 @@ geneTree = as.dendrogram(hr, method="average")
 
 pdf(file.path(opt$output,"heatmap_res_DEG.vst.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
-heatmap.2(norm_counts_DEG_mat,
-          Rowv=as.dendrogram(hr), 
-          Colv=as.dendrogram(hc),
-          col=redgreen(100),
-          scale="row",
-          margins = c(7, 7),
-          cexCol = 0.7,
-          labRow = F,
-          main = paste0("DEG results heatmap n=", nrow_heat),
-          trace = "none",
-          ColSideColors = col_annotation)
+pheatmap(norm_counts_DEG_mat,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         color = colorRampPalette(c("red", "black", "green"))(100),
+         scale = "row",
+         fontsize_col = 10,  # Adjusted to approximate cexCol = 0.7
+         show_rownames = FALSE,
+         main = paste0("DEG results heatmap n=", nrow_heat),
+         treeheight_row = 50,  # You can adjust these heights if desired
+         treeheight_col = 50,
+         border_color = NA,
+         fontsize = 12,
+         cellwidth = NA,
+         cellheight = NA,
+         angle_col = 45,
+         annotation_col = annotation,
+         annotation_colors = annotation_colors)
+
 dev.off()
 
 #Heatmap DEG res_
@@ -790,51 +802,25 @@ geneTree = as.dendrogram(hr, method="average")
 
 pdf(file.path(opt$output,"heatmap_res_DEG.rlog.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
-heatmap.2(norm_counts_DEG_mat,
-          Rowv=as.dendrogram(hr), 
-          Colv=as.dendrogram(hc),
-          col=redgreen(100),
-          scale="row",
-          margins = c(7, 7),
-          cexCol = 0.7,
-          labRow = F,
-          main = paste0("DEG results heatmap n=", nrow_heat),
-          trace = "none",
-          ColSideColors = col_annotation)
+pheatmap(norm_counts_DEG_mat,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         color = colorRampPalette(c("red", "black", "green"))(100),
+         scale = "row",
+         fontsize_col = 10,  # Adjusted to approximate cexCol = 0.7
+         show_rownames = FALSE,
+         main = paste0("DEG results heatmap n=", nrow_heat),
+         treeheight_row = 50,  # You can adjust these heights if desired
+         treeheight_col = 50,
+         border_color = NA,
+         fontsize = 12,
+         cellwidth = NA,
+         cellheight = NA,
+         angle_col = 45,
+         annotation_col = annotation,
+         annotation_colors = annotation_colors)
 dev.off()
 
-# graph for first 100 top regulated genes for res_ vst
-mypalette <- brewer.pal(11, "RdYlBu")
-morecols <- colorRampPalette(mypalette)
-ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
-topVarGenes_res <- res_filter$EnsemblID[1:100]
-rownames(vst) <- gsub("\\..*","",rownames(vst))
-mat  <- assay(vst)[ topVarGenes_res, ]
-mat  <- mat - rowMeans(mat)
-annocol <- as.data.frame(colData(vst)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.vst.res.DEGs.pdf"), height=20, width = 20)
-pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
-                   cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
-                   treeheight_row = 150, annotation_colors = ann_colors,
-                   main = "Top 100 most significant regulated genes", border_color = "black" )
-dev.off()
-
-
-# graph for first 100 top regulated genes for res_ rlog
-#mypalette <- brewer.pal(11, "RdYlBu")
-#morecols <- colorRampPalette(mypalette)
-#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
-#topVarGenes_res <- res_filter$EnsemblID[1:100]
-rownames(rlog) <- gsub("\\..*","",rownames(rlog))
-mat  <- assay(rlog)[ topVarGenes_res, ]
-mat  <- mat - rowMeans(mat)
-annocol <- as.data.frame(colData(rlog)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.rlog.res.DEGs.pdf"), height=20, width = 20)
-pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
-                   cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
-                   treeheight_row = 150, annotation_colors = ann_colors,
-                   main = "Top 100 most significant regulated genes", border_color = "black" )
-dev.off()
 
 #Export the results apeglm
 resApeglm_ <- as.data.frame(resApeglm[order(resApeglm$padj, decreasing = FALSE),])
@@ -878,17 +864,23 @@ geneTree = as.dendrogram(hr, method="average")
 
 pdf(file.path(opt$output,"heatmap_resApeglm_DEG.normalization.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
-heatmap.2(norm_counts_DEG_mat,
-          Rowv=as.dendrogram(hr), 
-          Colv=as.dendrogram(hc),
-          col=redgreen(100),
-          scale="row",
-          margins = c(7, 7),
-          cexCol = 0.7,
-          labRow = F,
-          main = paste0("DEG Apeglm heatmap n=", nrow_heat),
-          trace = "none",
-          ColSideColors = col_annotation)
+pheatmap(norm_counts_DEG_mat,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         color = colorRampPalette(c("red", "black", "green"))(100),
+         scale = "row",
+         fontsize_col = 10,  # Adjusted to approximate cexCol = 0.7
+         show_rownames = FALSE,
+         main = paste0("DEG results heatmap n=", nrow_heat),
+         treeheight_row = 50,  # You can adjust these heights if desired
+         treeheight_col = 50,
+         border_color = NA,
+         fontsize = 12,
+         cellwidth = NA,
+         cellheight = NA,
+         angle_col = 45,
+         annotation_col = annotation,
+         annotation_colors = annotation_colors)
 dev.off()
 
 #Heatmap DEG apeglm vst
@@ -914,17 +906,23 @@ geneTree = as.dendrogram(hr, method="average")
 
 pdf(file.path(opt$output,"heatmap_resApeglm_DEG.vst.pdf"),height=as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
-heatmap.2(norm_counts_DEG_mat,
-          Rowv=as.dendrogram(hr), 
-          Colv=as.dendrogram(hc),
-          col=redgreen(100),
-          scale="row",
-          margins = c(7, 7),
-          cexCol = 0.7,
-          labRow = F,
-          main = paste0("DEG Apeglm heatmap n=", nrow_heat),
-          trace = "none",
-          ColSideColors = col_annotation)
+pheatmap(norm_counts_DEG_mat,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         color = colorRampPalette(c("red", "black", "green"))(100),
+         scale = "row",
+         fontsize_col = 10,  # Adjusted to approximate cexCol = 0.7
+         show_rownames = FALSE,
+         main = paste0("DEG results heatmap n=", nrow_heat),
+         treeheight_row = 50,  # You can adjust these heights if desired
+         treeheight_col = 50,
+         border_color = NA,
+         fontsize = 12,
+         cellwidth = NA,
+         cellheight = NA,
+         angle_col = 45,
+         annotation_col = annotation,
+         annotation_colors = annotation_colors)
 dev.off()
 
 #Heatmap DEG apeglm rlog
@@ -950,49 +948,23 @@ geneTree = as.dendrogram(hr, method="average")
 
 pdf(file.path(opt$output,"heatmap_resApeglm_DEG.rlog.pdf"),height=as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
-heatmap.2(norm_counts_DEG_mat,
-          Rowv=as.dendrogram(hr), 
-          Colv=as.dendrogram(hc),
-          col=redgreen(100),
-          scale="row",
-          margins = c(7, 7),
-          cexCol = 0.7,
-          labRow = F,
-          main = paste0("DEG Apeglm heatmap n=", nrow_heat),
-          trace = "none",
-          ColSideColors = col_annotation)
-dev.off()
-
-# graph for first 100 top regulated genes for res_apeglm vst
-mypalette <- brewer.pal(11, "RdYlBu")
-morecols <- colorRampPalette(mypalette)
-ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
-topVarGenes_res <- resApeglm_filter$EnsemblID[1:100]
-rownames(vst) <- gsub("\\..*","",rownames(vst))
-mat  <- assay(vst)[ topVarGenes_res, ]
-mat  <- mat - rowMeans(mat)
-annocol <- as.data.frame(colData(vst)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.vst.res.apeglm.DEGs.pdf"), height=20, width = 20)
-pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
-                   cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
-                   treeheight_row = 150, annotation_colors = ann_colors, 
-                   main = "Top 100 most significant regulated genes", border_color = "black" )
-dev.off()
-
-# graph for first 100 top regulated genes for res_apeglm rlog
-#mypalette <- brewer.pal(11, "RdYlBu")
-#morecols <- colorRampPalette(mypalette)
-#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
-#topVarGenes_res <- resApeglm_filter$EnsemblID[1:100]
-rownames(rlog) <- gsub("\\..*","",rownames(rlog))
-mat  <- assay(rlog)[ topVarGenes_res, ]
-mat  <- mat - rowMeans(mat)
-annocol <- as.data.frame(colData(rlog)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.rlog.res.apeglm.DEGs.pdf"), height=20, width = 20)
-pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
-                   cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
-                   treeheight_row = 150, annotation_colors = ann_colors, 
-                   main = "Top 100 most significant regulated genes", border_color = "black" )
+pheatmap(norm_counts_DEG_mat,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         color = colorRampPalette(c("red", "black", "green"))(100),
+         scale = "row",
+         fontsize_col = 10,  # Adjusted to approximate cexCol = 0.7
+         show_rownames = FALSE,
+         main = paste0("DEG results heatmap n=", nrow_heat),
+         treeheight_row = 50,  # You can adjust these heights if desired
+         treeheight_col = 50,
+         border_color = NA,
+         fontsize = 12,
+         cellwidth = NA,
+         cellheight = NA,
+         angle_col = 45,
+         annotation_col = annotation,
+         annotation_colors = annotation_colors)
 dev.off()
 
 #Export the results Norm
@@ -1037,17 +1009,23 @@ geneTree = as.dendrogram(hr, method="average")
 
 pdf(file.path(opt$output,"heatmap_resnormDEG.normalization.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
-heatmap.2(norm_counts_DEG_mat,
-          Rowv=as.dendrogram(hr), 
-          Colv=as.dendrogram(hc),
-          col=redgreen(100),
-          scale="row",
-          margins = c(7, 7),
-          cexCol = 0.7,
-          labRow = F,
-          main = paste0("DEG norm heatmap n=", nrow_heat),
-          trace = "none",
-          ColSideColors = col_annotation)
+pheatmap(norm_counts_DEG_mat,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         color = colorRampPalette(c("red", "black", "green"))(100),
+         scale = "row",
+         fontsize_col = 10,  # Adjusted to approximate cexCol = 0.7
+         show_rownames = FALSE,
+         main = paste0("DEG results heatmap n=", nrow_heat),
+         treeheight_row = 50,  # You can adjust these heights if desired
+         treeheight_col = 50,
+         border_color = NA,
+         fontsize = 12,
+         cellwidth = NA,
+         cellheight = NA,
+         angle_col = 45,
+         annotation_col = annotation,
+         annotation_colors = annotation_colors)
 dev.off()
 
 #Heatmap DEG vst
@@ -1073,17 +1051,23 @@ geneTree = as.dendrogram(hr, method="average")
 
 pdf(file.path(opt$output,"heatmap_resnormDEG.vst.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
-heatmap.2(norm_counts_DEG_mat,
-          Rowv=as.dendrogram(hr), 
-          Colv=as.dendrogram(hc),
-          col=redgreen(100),
-          scale="row",
-          margins = c(7, 7),
-          cexCol = 0.7,
-          labRow = F,
-          main = paste0("DEG norm heatmap n=", nrow_heat),
-          trace = "none",
-          ColSideColors = col_annotation)
+pheatmap(norm_counts_DEG_mat,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         color = colorRampPalette(c("red", "black", "green"))(100),
+         scale = "row",
+         fontsize_col = 10,  # Adjusted to approximate cexCol = 0.7
+         show_rownames = FALSE,
+         main = paste0("DEG results heatmap n=", nrow_heat),
+         treeheight_row = 50,  # You can adjust these heights if desired
+         treeheight_col = 50,
+         border_color = NA,
+         fontsize = 12,
+         cellwidth = NA,
+         cellheight = NA,
+         angle_col = 45,
+         annotation_col = annotation,
+         annotation_colors = annotation_colors)
 dev.off()
 
 #Heatmap DEG rlog
@@ -1109,49 +1093,23 @@ geneTree = as.dendrogram(hr, method="average")
 
 pdf(file.path(opt$output,"heatmap_resnormDEG.rlog.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
-heatmap.2(norm_counts_DEG_mat,
-          Rowv=as.dendrogram(hr), 
-          Colv=as.dendrogram(hc),
-          col=redgreen(100),
-          scale="row",
-          margins = c(7, 7),
-          cexCol = 0.7,
-          labRow = F,
-          main = paste0("DEG norm heatmap n=", nrow_heat),
-          trace = "none",
-          ColSideColors = col_annotation)
-dev.off()
-
-# graph for first 100 top regulated genes for res_norm vst
-mypalette <- brewer.pal(11, "RdYlBu")
-morecols <- colorRampPalette(mypalette)
-ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
-topVarGenes_res <- resNorm_filter$EnsemblID[1:100]
-rownames(vst) <- gsub("\\..*","",rownames(vst))
-mat  <- assay(vst)[ topVarGenes_res, ]
-mat  <- mat - rowMeans(mat)
-annocol <- as.data.frame(colData(vst)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.vst.res.norm.DEGs.pdf"), height=20, width = 20)
-pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
-                   cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
-                   treeheight_row = 150, annotation_colors = ann_colors, 
-                   main = "Top 100 most significant regulated genes", border_color = "black" )
-dev.off()
-
-# graph for first 100 top regulated genes for res_norm rlog
-#mypalette <- brewer.pal(11, "RdYlBu")
-#morecols <- colorRampPalette(mypalette)
-#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
-#topVarGenes_res <- resNorm_filter$EnsemblID[1:100]
-rownames(rlog) <- gsub("\\..*","",rownames(rlog))
-mat  <- assay(rlog)[ topVarGenes_res, ]
-mat  <- mat - rowMeans(mat)
-annocol <- as.data.frame(colData(rlog)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.rlog.res.norm.DEGs.pdf"), height=20, width = 20)
-pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
-                   cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
-                   treeheight_row = 150, annotation_colors = ann_colors, 
-                   main = "Top 100 most significant regulated genes", border_color = "black" )
+pheatmap(norm_counts_DEG_mat,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         color = colorRampPalette(c("red", "black", "green"))(100),
+         scale = "row",
+         fontsize_col = 10,  # Adjusted to approximate cexCol = 0.7
+         show_rownames = FALSE,
+         main = paste0("DEG results heatmap n=", nrow_heat),
+         treeheight_row = 50,  # You can adjust these heights if desired
+         treeheight_col = 50,
+         border_color = NA,
+         fontsize = 12,
+         cellwidth = NA,
+         cellheight = NA,
+         angle_col = 45,
+         annotation_col = annotation,
+         annotation_colors = annotation_colors)
 dev.off()
 
 #Export the results Ash
@@ -1196,17 +1154,23 @@ geneTree = as.dendrogram(hr, method="average")
 
 pdf(file.path(opt$output,"heatmap_Ash_DEG.normalization.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
-heatmap.2(norm_counts_DEG_mat,
-          Rowv=as.dendrogram(hr), 
-          Colv=as.dendrogram(hc),
-          col=redgreen(100),
-          scale="row",
-          margins = c(7, 7),
-          cexCol = 0.7,
-          labRow = F,
-          main = paste0("DEG Ash heatmap n=", nrow_heat),
-          trace = "none",
-          ColSideColors = col_annotation)
+pheatmap(norm_counts_DEG_mat,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         color = colorRampPalette(c("red", "black", "green"))(100),
+         scale = "row",
+         fontsize_col = 10,  # Adjusted to approximate cexCol = 0.7
+         show_rownames = FALSE,
+         main = paste0("DEG results heatmap n=", nrow_heat),
+         treeheight_row = 50,  # You can adjust these heights if desired
+         treeheight_col = 50,
+         border_color = NA,
+         fontsize = 12,
+         cellwidth = NA,
+         cellheight = NA,
+         angle_col = 45,
+         annotation_col = annotation,
+         annotation_colors = annotation_colors)
 dev.off()
 
 #Heatmap DEG Ash vst
@@ -1232,17 +1196,23 @@ geneTree = as.dendrogram(hr, method="average")
 
 pdf(file.path(opt$output,"heatmap_Ash_DEG.vst.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
-heatmap.2(norm_counts_DEG_mat,
-          Rowv=as.dendrogram(hr), 
-          Colv=as.dendrogram(hc),
-          col=redgreen(100),
-          scale="row",
-          margins = c(7, 7),
-          cexCol = 0.7,
-          labRow = F,
-          main = paste0("DEG Ash heatmap n=", nrow_heat),
-          trace = "none",
-          ColSideColors = col_annotation)
+pheatmap(norm_counts_DEG_mat,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         color = colorRampPalette(c("red", "black", "green"))(100),
+         scale = "row",
+         fontsize_col = 10,  # Adjusted to approximate cexCol = 0.7
+         show_rownames = FALSE,
+         main = paste0("DEG results heatmap n=", nrow_heat),
+         treeheight_row = 50,  # You can adjust these heights if desired
+         treeheight_col = 50,
+         border_color = NA,
+         fontsize = 12,
+         cellwidth = NA,
+         cellheight = NA,
+         angle_col = 45,
+         annotation_col = annotation,
+         annotation_colors = annotation_colors)
 dev.off()
 
 #Heatmap DEG Ash rlog
@@ -1268,47 +1238,21 @@ geneTree = as.dendrogram(hr, method="average")
 
 pdf(file.path(opt$output,"heatmap_Ash_DEG.rlog.pdf"),as.numeric(opt$Height), width = as.numeric(opt$width))
 nrow_heat <- nrow(norm_counts_DEG_mat)
-heatmap.2(norm_counts_DEG_mat,
-          Rowv=as.dendrogram(hr), 
-          Colv=as.dendrogram(hc),
-          col=redgreen(100),
-          scale="row",
-          margins = c(7, 7),
-          cexCol = 0.7,
-          labRow = F,
-          main = paste0("DEG Ash heatmap n=", nrow_heat),
-          trace = "none",
-          ColSideColors = col_annotation)
-dev.off()
-
-# graph for first 100 top regulated genes for res_ash vst
-mypalette <- brewer.pal(11, "RdYlBu")
-morecols <- colorRampPalette(mypalette)
-ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
-topVarGenes_res <- resAsh_filter$EnsemblID[1:100]
-rownames(vst) <- gsub("\\..*","",rownames(vst))
-mat  <- assay(vst)[ topVarGenes_res, ]
-mat  <- mat - rowMeans(mat)
-annocol <- as.data.frame(colData(vst)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.vst.res.ash.DEGs.pdf"), height=20, width = 20)
-pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
-                   cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
-                   treeheight_row = 150, annotation_colors = ann_colors, 
-                   main = "Top 100 most significant regulated genes", border_color = "black" )
-dev.off()
-
-# graph for first 100 top regulated genes for res_ash rlog
-#mypalette <- brewer.pal(11, "RdYlBu")
-#morecols <- colorRampPalette(mypalette)
-#ann_colors <- list(CellType= c(CONTROL="orange", TUMOR="purple"))
-#topVarGenes_res <- resAsh_filter$EnsemblID[1:100]
-rownames(rlog) <- gsub("\\..*","",rownames(rlog))
-mat  <- assay(rlog)[ topVarGenes_res, ]
-mat  <- mat - rowMeans(mat)
-annocol <- as.data.frame(colData(rlog)[,1,drop=FALSE])
-pdf(file.path(opt$output,"Top100.rlog.res.ash.DEGs.pdf"), height=20, width = 20)
-pheatmap::pheatmap(mat, annotation_col = annocol, cellwidth = 20, cellheight = 10,
-                   cutree_cols = 2, cutree_rows = 2, col=rev(morecols(50)), 
-                   treeheight_row = 150, annotation_colors = ann_colors, 
-                   main = "Top 100 most significant regulated genes", border_color = "black" )
+pheatmap(norm_counts_DEG_mat,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         color = colorRampPalette(c("red", "black", "green"))(100),
+         scale = "row",
+         fontsize_col = 10,  # Adjusted to approximate cexCol = 0.7
+         show_rownames = FALSE,
+         main = paste0("DEG results heatmap n=", nrow_heat),
+         treeheight_row = 50,  # You can adjust these heights if desired
+         treeheight_col = 50,
+         border_color = NA,
+         fontsize = 12,
+         cellwidth = NA,
+         cellheight = NA,
+         angle_col = 45,
+         annotation_col = annotation,
+         annotation_colors = annotation_colors)
 dev.off()
